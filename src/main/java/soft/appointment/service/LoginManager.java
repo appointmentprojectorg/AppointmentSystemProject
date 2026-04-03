@@ -12,7 +12,7 @@ import soft.appointment.persistence.UserStorage;
 public class LoginManager {
     
     /**  used to find users in the file */
-    private UserStorage storage = new UserStorage();
+    private UserStorage storage;
     
     /** Keeps track of the person currently using the system */
     private User currentUser = null;
@@ -42,6 +42,18 @@ public class LoginManager {
         // If it reaches here, the login failed
         return false;
     }
+    /**
+     * Constructor with passing
+     */
+    public LoginManager(UserStorage storage) {
+        this.storage = storage;
+    }
+     /**
+     * Default constructor 
+     */
+    public LoginManager() {
+        this.storage = new UserStorage();
+    }
 
     /**
      * Clears the current user session (Logout).
@@ -68,12 +80,14 @@ public class LoginManager {
      * @return 1 for success, 0 for mismatch, -1 for taken
      */
     public int registerUser(String username, String password, String confirmPassword, String role) {
-        // we start by checking if the username is already taken first
-        if (storage.getUserByUsername(username) != null) {
-            return -1; // name already used
-        }
+        // 1. Core Logic Check (No Mocking needed)
         if (!password.equals(confirmPassword)) {
             return 0; // Failure code for "Mismatch"
+        }
+        
+        // 2. Storage Check (Requires Mocking for Unit Testing)
+        if (storage.getUserByUsername(username) != null) {
+            return -1; // name already used
         }
         
         // If it's a new name, save them to the file

@@ -14,7 +14,7 @@ import soft.appointment.domain.User;
 public class UserStorage {
 
     /** The name of the file on the computer */
-    private final String FILE_NAME = "users.txt";
+    private  String FILE_NAME = "users.txt";
 
     /**
      * Saves a user's information to the text file.
@@ -26,10 +26,18 @@ public class UserStorage {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
             // We save it in this format username,password,role
             writer.println(user.getUsername() + "," + user.getPassword() + "," + user.getRole());
-        } catch (IOException e) {
+        } catch (IOException e) { //
             
         }
     }
+    public UserStorage() {
+        this("users.txt");
+    }
+    
+    public UserStorage(String fileName) {
+        this.FILE_NAME = fileName;
+    }
+
     
     /**
      * Reads the file and searches for a user by their username.

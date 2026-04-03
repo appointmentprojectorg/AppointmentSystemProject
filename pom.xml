@@ -33,7 +33,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
-            <version>5.5.0</version>
+            <version>5.23.0</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -43,7 +43,12 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.10</version>
+                <version>0.8.14</version>
+                <configuration>
+        <excludes>
+            <exclude>soft/appointment/presentation/*</exclude>
+        </excludes>
+    </configuration>
                 <executions>
                     <execution>
                         <goals>

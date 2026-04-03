@@ -13,7 +13,7 @@ import soft.appointment.persistence.AppointmentStorage;
  */
 public class AppointmentManager {
     
-    private AppointmentStorage storage = new AppointmentStorage();
+    private AppointmentStorage storage ;
 
     /**
      * the method that returns only the appointment slots that are available.
@@ -39,21 +39,23 @@ public class AppointmentManager {
      * @return true if the appointment is in the future, false otherwise
      */
     public boolean isSlotValid(Appointment appt) {
+        // 1. Core Logic Check (No Mocking needed)
+        int minutes = appt.getStartTime().getMinute();
+        if (minutes != 0 && minutes != 30) {
+            return false; 
+        }
+
+        // 2. Time-Sensitive Check (Requires Mocking per PDF)
         java.time.LocalDateTime selected = java.time.LocalDateTime.of(
             appt.getDate(), 
             appt.getStartTime()
         );
         
-        // it has to be after the current time for it to add
-         if (selected.isBefore(java.time.LocalDateTime.now())) {
-        return false;
-    }
-          int minutes = appt.getStartTime().getMinute();
-    if (minutes != 0 && minutes != 30) {
-        return false; 
-    }
+        if (selected.isBefore(java.time.LocalDateTime.now())) {
+            return false;
+        }
+        
         return true;
-
     }
     
     /**
@@ -67,6 +69,24 @@ public class AppointmentManager {
             return true;
         }
         return false;
+    }
+      /**
+     *  constructor
+     * 
+     * 
+     */
+      public AppointmentManager(AppointmentStorage storage) {
+        this.storage = storage;
+    }
+      
+       /**
+     *  default constructor
+     * 
+     * 
+     */
+
+    public AppointmentManager() {
+        this.storage = new AppointmentStorage();
     }
     
     /**

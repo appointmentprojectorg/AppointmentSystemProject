@@ -15,7 +15,7 @@ import soft.appointment.domain.Appointment;
  */
 public class AppointmentStorage {
     
-    private final String FILE_NAME = "appointments.txt";
+    private  String FILE_NAME = "appointments.txt";
 
     /**
      * Saves a single appointment to the file.
@@ -25,10 +25,18 @@ public class AppointmentStorage {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
             // Format: date,time,isAvailable
             writer.println(appt.getDate() + "," + appt.getStartTime() + "," + appt.isAvailable());
-        } catch (IOException e) {
+        } catch (IOException e) { //
             
         }
     }
+    
+     public AppointmentStorage() {
+    }
+
+    public AppointmentStorage(String fileName) {
+        this.FILE_NAME = fileName;
+    }
+    
 
     /**
      * Loads all appointments from the file into a List.

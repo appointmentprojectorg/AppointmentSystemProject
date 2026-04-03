@@ -1,2 +1,0 @@
-admin123,0000,ADMIN
-mohammad,123,USER

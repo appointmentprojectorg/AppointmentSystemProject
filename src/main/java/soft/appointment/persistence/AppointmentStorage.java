@@ -14,59 +14,96 @@ import soft.appointment.domain.Appointment;
  * @version 1.0
  */
 public class AppointmentStorage {
-    
-    private final String FILE_NAME = "appointments.txt";
+     private final String FILE_NAME = "appointments.txt";
 
-    /**
-     * Saves a single appointment to the file.
-     * @param appt the appointment to save
-     */
     public void saveAppointment(Appointment appt) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
-            // Format: date,time,isAvailable
-            writer.println(appt.getDate() + "," + appt.getStartTime() + "," + appt.isAvailable());
+
+            writer.println(
+                appt.getDate() + "," +
+                appt.getStartTime() + "," +
+                appt.isAvailable() + "," +
+                appt.getDuration() + "," +
+                appt.getParticipants()
+            );
+
         } catch (IOException e) {
-            
         }
     }
 
-    /**
-     * Loads all appointments from the file into a List.
-     * @return a List of Appointment objects
-     */
+    
     public List<Appointment> loadAllAppointments() {
         List<Appointment> list = new ArrayList<>();
         File file = new File(FILE_NAME);
-        
+
         if (!file.exists()) return list;
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
+
             while ((line = reader.readLine()) != null) {
+
                 String[] p = line.split(",");
-                // Convert the strings back into LocalDate and LocalTime objects
-                Appointment appt = new Appointment(LocalDate.parse(p[0]), LocalTime.parse(p[1]));
+
+                Appointment appt = new Appointment(
+                    LocalDate.parse(p[0]),
+                    LocalTime.parse(p[1])
+                );
+
                 appt.setAvailable(Boolean.parseBoolean(p[2]));
+
+               
+                if (p.length > 3) {
+                    appt.setDuration(Integer.parseInt(p[3]));
+                } else {
+                    appt.setDuration(30);
+                }
+
+                if (p.length > 4) {
+                    appt.setParticipants(Integer.parseInt(p[4]));
+                } else {
+                    appt.setParticipants(0);
+                }
+
                 list.add(appt);
             }
+
         } catch (IOException e) {
         }
+
         return list;
     }
-    /**
- * Removes a specific appointment from the storage file.
- * @param target The appointment to be removed
- */
-public void deleteAppointment(Appointment target) {
-    List<Appointment> all = loadAllAppointments();
-    all.removeIf(a -> a.getDate().equals(target.getDate()) && 
-                      a.getStartTime().equals(target.getStartTime()));
-    
-    try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
-        for (Appointment a : all) {
-            writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable());
-        }
-    } catch (IOException e) {
+
+    public void deleteAppointment(Appointment target) {
+
+        List<Appointment> all = loadAllAppointments();
+
+        all.removeIf(a ->
+            a.getDate().equals(target.getDate()) &&
+            a.getStartTime().equals(target.getStartTime())
+        );
+
+        overwriteAll(all);
     }
-}
+
+    
+    public void overwriteAll(List<Appointment> list) {
+
+        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
+
+            for (Appointment a : list) {
+
+                writer.println(
+                    a.getDate() + "," +
+                    a.getStartTime() + "," +
+                    a.isAvailable() + "," +
+                    a.getDuration() + "," +
+                    a.getParticipants()
+                );
+            }
+
+        } catch (IOException e) {
+        }
+    }
+   
 }

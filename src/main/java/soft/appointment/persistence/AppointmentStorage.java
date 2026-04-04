@@ -21,14 +21,18 @@ public class AppointmentStorage {
      * Saves a single appointment to the file.
      * @param appt the appointment to save
      */
-    public void saveAppointment(Appointment appt) {
-        try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
-            // Format: date,time,isAvailable
-            writer.println(appt.getDate() + "," + appt.getStartTime() + "," + appt.isAvailable());
-        } catch (IOException e) { //
-            
-        }
+   public void saveAppointment(Appointment appt) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
+        // new format date,time,isAvailable,status,maxParticipants,currentParticipants
+        writer.println(appt.getDate() + "," + 
+                       appt.getStartTime() + "," + 
+                       appt.isAvailable() + "," + 
+                       appt.getStatus() + "," + 
+                       appt.getMaxParticipants() + "," + 
+                       appt.getCurrentParticipants());
+    } catch (IOException e) { 
     }
+}
     
      public AppointmentStorage() {
     }
@@ -51,12 +55,16 @@ public class AppointmentStorage {
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line;
             while ((line = reader.readLine()) != null) {
-                String[] p = line.split(",");
-                // Convert the strings back into LocalDate and LocalTime objects
-                Appointment appt = new Appointment(LocalDate.parse(p[0]), LocalTime.parse(p[1]));
-                appt.setAvailable(Boolean.parseBoolean(p[2]));
-                list.add(appt);
-            }
+    String[] p = line.split(",");
+    Appointment appt = new Appointment(LocalDate.parse(p[0]), LocalTime.parse(p[1]));
+    appt.setAvailable(Boolean.parseBoolean(p[2]));
+    
+    appt.setStatus(p[3]);
+    appt.setMaxParticipants(Integer.parseInt(p[4]));
+    appt.setCurrentParticipants(Integer.parseInt(p[5]));
+    
+    list.add(appt);
+}
         } catch (IOException e) {
         }
         return list;
@@ -72,7 +80,8 @@ public void deleteAppointment(Appointment target) {
     
     try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
         for (Appointment a : all) {
-            writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable());
+            writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable() + "," +
+                           a.getStatus() + "," + a.getMaxParticipants() + "," + a.getCurrentParticipants());
         }
     } catch (IOException e) {
     }

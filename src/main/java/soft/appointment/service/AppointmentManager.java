@@ -9,22 +9,69 @@ import soft.appointment.persistence.AppointmentStorage;
  * Manages the business logic for appointments by talking to the Storage layer.
  * 
  * @author MoumenAbuAyyash1
- * @version 1.0
+ * @version 1.1
  */
 public class AppointmentManager {
     
-    private AppointmentStorage storage ;
+    private AppointmentStorage storage;
+    private AppointmentRuleCalculator calculator; 
+
+    public AppointmentManager() {
+        this(new AppointmentStorage(), new AppointmentRuleCalculator());
+    }
+
+    public AppointmentManager(AppointmentStorage storage, AppointmentRuleCalculator calculator) {
+        this.storage = storage;
+        this.calculator = calculator;
+    }
 
     /**
-     * the method that returns only the appointment slots that are available.
-     * 
-     * @return a list of Appointment objects where available is true
+     * Checks if an appointment slot is valid for creation.
      */
+    public boolean isSlotValid(Appointment appt) {
+        java.time.LocalDateTime selected = java.time.LocalDateTime.of(appt.getDate(), appt.getStartTime());
+        if (selected.isBefore(java.time.LocalDateTime.now())) {
+            return false;
+        }
+
+        calculator.setStrategy(new DurationRule());
+        if (!calculator.validate(appt)) {
+            return false;
+        }
+
+        return true; 
+    }
+
+    /**
+     * Processes a booking for a specific slot.
+     */
+    public String bookAppointment(Appointment appt) {
+        calculator.setStrategy(new DurationRule());
+        if (!calculator.validate(appt)) {
+            return calculator.getErrorMessage();
+        }
+
+        calculator.setStrategy(new CapacityRule());
+        if (!calculator.validate(appt)) {
+            return calculator.getErrorMessage();
+        }
+
+        appt.setCurrentParticipants(appt.getCurrentParticipants() + 1);
+        
+        if (appt.getCurrentParticipants() >= appt.getMaxParticipants()) {
+            appt.setAvailable(false);
+            appt.setStatus("Confirmed");
+        }
+
+        storage.deleteAppointment(appt);
+        storage.saveAppointment(appt);
+        
+        return "SUCCESS";
+    }
+
     public List<Appointment> getAvailableSlots() {
         List<Appointment> all = storage.loadAllAppointments();
         List<Appointment> availableOnly = new ArrayList<>();
-        
-        // add only add the ones that aren't booked yet
         for (Appointment a : all) {
             if (a.isAvailable()) {
                 availableOnly.add(a);
@@ -32,68 +79,16 @@ public class AppointmentManager {
         }
         return availableOnly;
     }
-     /**
-     * Checks if an appointment slot is valid (e.g., in the future).
-     * 
-     * @param appt The appointment to validate
-     * @return true if the appointment is in the future, false otherwise
-     */
-    public boolean isSlotValid(Appointment appt) {
-        // 1. Core Logic Check (No Mocking needed)
-        int minutes = appt.getStartTime().getMinute();
-        if (minutes != 0 && minutes != 30) {
-            return false; 
-        }
-
-        // 2. Time-Sensitive Check (Requires Mocking per PDF)
-        java.time.LocalDateTime selected = java.time.LocalDateTime.of(
-            appt.getDate(), 
-            appt.getStartTime()
-        );
-        
-        if (selected.isBefore(java.time.LocalDateTime.now())) {
-            return false;
-        }
-        
-        return true;
-    }
     
-    /**
-     *  new appointment slot to the system.
-     * 
-     * @param appt the appointment object to be stored
-     */
-     public boolean addNewSlot(Appointment appt) {
+    public boolean addNewSlot(Appointment appt) {
         if (isSlotValid(appt)) {
             storage.saveAppointment(appt);
             return true;
         }
         return false;
     }
-      /**
-     *  constructor
-     * 
-     * 
-     */
-      public AppointmentManager(AppointmentStorage storage) {
-        this.storage = storage;
-    }
-      
-       /**
-     *  default constructor
-     * 
-     * 
-     */
 
-    public AppointmentManager() {
-        this.storage = new AppointmentStorage();
+    public void removeSlot(Appointment appt) {
+        storage.deleteAppointment(appt);
     }
-    
-    /**
- *  for deleting an appointment slot.
- * @param appt The appointment to delete
- */
-public void removeSlot(Appointment appt) {
-    storage.deleteAppointment(appt);
-}
 }

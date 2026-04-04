@@ -165,12 +165,21 @@ public class UserGui extends javax.swing.JFrame {
  */
     private void bookBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bookBtnActionPerformed
         // TODO add your handling code here:
-         int row = appointmentsTable.getSelectedRow();
-    if (row == -1) {
+        int selectedRow = appointmentsTable.getSelectedRow();
+    if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Please select a slot from the table first!");
         return;
     }
-    JOptionPane.showMessageDialog(this, "Booking feature coming !");
+    List<soft.appointment.domain.Appointment> availableSlots = appointmentManager.getAvailableSlots();
+    Appointment selectedAppt = availableSlots.get(selectedRow);
+     String result = appointmentManager.bookAppointment(selectedAppt);
+     if (result.equals("SUCCESS")) {
+        JOptionPane.showMessageDialog(this, "Success! Your appointment is confirmed.");
+        refreshTable(); 
+    } else {
+        
+        JOptionPane.showMessageDialog(this, "Booking Failed: " + result);
+    }
     }//GEN-LAST:event_bookBtnActionPerformed
 
     /**

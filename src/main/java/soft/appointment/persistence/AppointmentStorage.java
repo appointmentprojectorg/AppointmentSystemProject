@@ -23,13 +23,19 @@ public class AppointmentStorage {
      */
    public void saveAppointment(Appointment appt) {
     try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
-        // new format date,time,isAvailable,status,maxParticipants,currentParticipants
+        String participantNames = String.join(";", appt.getParticipants());
+        
+        if (participantNames.isEmpty()) {
+            participantNames = "NONE";
+        }
+
         writer.println(appt.getDate() + "," + 
                        appt.getStartTime() + "," + 
                        appt.isAvailable() + "," + 
                        appt.getStatus() + "," + 
                        appt.getMaxParticipants() + "," + 
-                       appt.getCurrentParticipants());
+                       appt.getCurrentParticipants() + "," + 
+                       participantNames); 
     } catch (IOException e) { 
     }
 }
@@ -62,6 +68,12 @@ public class AppointmentStorage {
     appt.setStatus(p[3]);
     appt.setMaxParticipants(Integer.parseInt(p[4]));
     appt.setCurrentParticipants(Integer.parseInt(p[5]));
+     String[] names = p[6].split(";");
+    for (String n : names) {
+        if (!n.equals("NONE") && !n.trim().isEmpty()) {
+            appt.addParticipant(n);
+        }
+    }
     
     list.add(appt);
 }
@@ -80,8 +92,12 @@ public void deleteAppointment(Appointment target) {
     
     try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
         for (Appointment a : all) {
+            String names = String.join(";", a.getParticipants());
+            if (names.isEmpty()) names = "NONE";
+
             writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable() + "," +
-                           a.getStatus() + "," + a.getMaxParticipants() + "," + a.getCurrentParticipants());
+                           a.getStatus() + "," + a.getMaxParticipants() + "," + a.getCurrentParticipants()
+            + "," + names); 
         }
     } catch (IOException e) {
     }

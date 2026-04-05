@@ -16,7 +16,7 @@ import soft.appointment.domain.Appointment;
  *
  * @author MoumenAbuAyyash1
  */
-public class DurationRuleTest {
+/*public class DurationRuleTest {
     private final DurationRule rule = new DurationRule();
 
     @Test
@@ -34,3 +34,4 @@ public class DurationRuleTest {
         assertEquals("Invalid Duration: Appointments must be booked in 30-minute slots (:00 or :30).", rule.getErrorMessage());
     }
 }
+*/

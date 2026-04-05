@@ -24,9 +24,9 @@ public class UserStorage {
     public void saveUser(User user) {
         
         try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
-            // We save it in this format username,password,role
-            writer.println(user.getUsername() + "," + user.getPassword() + "," + user.getRole());
-        } catch (IOException e) { //
+            // We save it in this format username,password,role...
+writer.println(user.getUsername() + "," + user.getPassword() + "," + user.getRole() + "," + user.getEmail());        }
+        catch (IOException e) { //
             
         }
     }
@@ -46,20 +46,26 @@ public class UserStorage {
      * @return a User object if found, or null if not found
      */
     public User getUserByUsername(String username) {
-        // using BufferedReader to read the file line by line
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(FILE_NAME))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                // we split the line at the comma to get each parameter seperated user,pass and role
-                String[] parts = line.split(",");
-                if (parts[0].equalsIgnoreCase(username)) {
-                    return new User(parts[0], parts[1], parts[2]);
-                }
-            }
-        } catch (java.io.IOException e) {
+    try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(FILE_NAME))) {
+        String line;
+        while ((line = reader.readLine()) != null) {
+            String[] parts = line.split(",");
             
+            if (parts.length < 3) continue;
+
+            if (parts[0].equalsIgnoreCase(username)) {
+                String emailVal;
+                if (parts.length >= 4) {
+                    emailVal = parts[3]; 
+                } else {
+                    emailVal = parts[0]; 
+                }
+
+                return new User(parts[0], parts[1], parts[2], emailVal);
+            }
         }
-        return null;
-    }
+    } catch (java.io.IOException e) { }
+    return null;
+}
     
 }

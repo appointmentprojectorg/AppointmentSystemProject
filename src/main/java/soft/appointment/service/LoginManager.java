@@ -79,19 +79,16 @@ public class LoginManager {
      * @param role the role (ADMIN or USER)
      * @return 1 for success, 0 for mismatch, -1 for taken
      */
-    public int registerUser(String username, String password, String confirmPassword, String role) {
-        // 1. Core Logic Check (No Mocking needed)
+    public int registerUser(String username, String password, String confirmPassword, String role,String email) {
         if (!password.equals(confirmPassword)) {
-            return 0; // Failure code for "Mismatch"
+            return 0; 
         }
         
-        // 2. Storage Check (Requires Mocking for Unit Testing)
         if (storage.getUserByUsername(username) != null) {
-            return -1; // name already used
+            return -1; 
         }
         
-        // If it's a new name, save them to the file
-        User newUser = new User(username, password, role);
+    User newUser = new User(username, password, role, email);
         storage.saveUser(newUser);
         return 1;
     }

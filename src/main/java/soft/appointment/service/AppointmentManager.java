@@ -1,8 +1,10 @@
 package soft.appointment.service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import soft.appointment.domain.Appointment;
+import soft.appointment.domain.User;
 import soft.appointment.persistence.AppointmentStorage;
 
 /**
@@ -41,11 +43,16 @@ public class AppointmentManager {
 
         return true; 
     }
+    
+    public List<Appointment> getAllSlots() {
+    // This returns the whole list from the file
+    return storage.loadAllAppointments();
+}
 
     /**
      * Processes a booking for a specific slot.
      */
-    public String bookAppointment(Appointment appt) {
+   public String bookAppointment(User user, Appointment appt) {
         calculator.setStrategy(new DurationRule());
         if (!calculator.validate(appt)) {
             return calculator.getErrorMessage();
@@ -62,6 +69,8 @@ public class AppointmentManager {
             appt.setAvailable(false);
             appt.setStatus("Confirmed");
         }
+        
+    appt.addParticipant(user.getUsername()); 
 
         storage.deleteAppointment(appt);
         storage.saveAppointment(appt);
@@ -91,4 +100,52 @@ public class AppointmentManager {
     public void removeSlot(Appointment appt) {
         storage.deleteAppointment(appt);
     }
+    
+    public boolean cancelAppointment(User user, Appointment appt) {
+    LocalDate today = LocalDate.now();
+    if (appt.getDate().isBefore(today) || appt.getDate().equals(today)) {
+        return false; 
+    }
+
+    if (!user.getRole().equalsIgnoreCase("ADMIN") && !appt.getParticipants().contains(user.getUsername())) {
+        return false; 
+    }
+
+    appt.setAvailable(true);
+    appt.setStatus("Available");
+    appt.getParticipants().clear(); 
+    appt.setCurrentParticipants(0);
+
+    storage.deleteAppointment(appt); 
+    storage.saveAppointment(appt);   
+    
+    return true;
+}
+    
+    public List<Appointment> getMyBookings(String username) {
+    List<Appointment> all = storage.loadAllAppointments();
+    List<Appointment> myStuff = new ArrayList<>();
+    for (Appointment a : all) {
+        if (a.getParticipants().contains(username)) {
+            myStuff.add(a);
+        }
+    }
+    return myStuff;
+}
+    public boolean cancelBooking(User user, Appointment appt) {
+    if (appt.getDate().isBefore(java.time.LocalDate.now())) {
+        return false; 
+    }
+
+    appt.removeParticipant(user.getUsername());
+    
+    appt.setCurrentParticipants(appt.getParticipants().size());
+    
+    appt.setAvailable(true);
+    appt.setStatus("Available");
+
+    storage.deleteAppointment(appt);
+    storage.saveAppointment(appt);
+    return true;
+}
 }

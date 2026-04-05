@@ -16,6 +16,8 @@ public class User {
     
     /** either administrator or user  */
     private String role;
+    
+    private String email;
 
     /**
      * 
@@ -24,10 +26,15 @@ public class User {
      * @param password 
      * @param role 
      */
-    public User(String username, String password, String role) {
+    public User(String username, String password, String role, String email) { 
         this.username = username;
         this.password = password;
         this.role = role;
+        this.email = email; 
+    }
+    
+    public String getEmail() { 
+        return email;
     }
 
     /**

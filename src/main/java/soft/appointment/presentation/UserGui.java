@@ -38,6 +38,7 @@ public class UserGui extends javax.swing.JFrame {
         setSafeWelcomeMessage(currentUser.getUsername());
         
         refreshTable();
+        refreshMyBookingsTable();
     }
      private void setSafeWelcomeMessage(String username) {
         String displayName = (username.length() > 15) ? username.substring(0, 12) + "..." : username;
@@ -53,6 +54,7 @@ public class UserGui extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jTabbedPane1 = new javax.swing.JTabbedPane();
         jPanel1 = new javax.swing.JPanel();
         jScrollPane1 = new javax.swing.JScrollPane();
         appointmentsTable = new javax.swing.JTable();
@@ -60,6 +62,12 @@ public class UserGui extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         welcomeLabel = new javax.swing.JLabel();
         logoutBtn = new javax.swing.JButton();
+        AppointmentsTable = new javax.swing.JButton();
+        jPanel2 = new javax.swing.JPanel();
+        refreshBtn = new javax.swing.JButton();
+        cancelBookingBtn = new javax.swing.JButton();
+        jScrollPane3 = new javax.swing.JScrollPane();
+        myBookingsTable = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -103,6 +111,9 @@ public class UserGui extends javax.swing.JFrame {
         logoutBtn.setText("Logout");
         logoutBtn.addActionListener(this::logoutBtnActionPerformed);
 
+        AppointmentsTable.setText("Refresh Table");
+        AppointmentsTable.addActionListener(this::AppointmentsTableActionPerformed);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -113,7 +124,8 @@ public class UserGui extends javax.swing.JFrame {
                     .addComponent(jLabel1)
                     .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(bookBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 121, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 82, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(AppointmentsTable))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -129,10 +141,77 @@ public class UserGui extends javax.swing.JFrame {
                         .addGap(41, 41, 41)
                         .addComponent(bookBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(AppointmentsTable, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(14, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        jTabbedPane1.addTab("Main", jPanel1);
+
+        refreshBtn.setText("Refresh Table");
+        refreshBtn.addActionListener(this::refreshBtnActionPerformed);
+
+        cancelBookingBtn.setText("Cancel Booking");
+        cancelBookingBtn.addActionListener(this::cancelBookingBtnActionPerformed);
+
+        myBookingsTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+
+            },
+            new String [] {
+                "Date", "Time", "Status"
+            }
+        ) {
+            Class[] types = new Class [] {
+                java.lang.String.class, java.lang.String.class, java.lang.String.class
+            };
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public Class getColumnClass(int columnIndex) {
+                return types [columnIndex];
+            }
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        myBookingsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
+        myBookingsTable.getTableHeader().setReorderingAllowed(false);
+        jScrollPane3.setViewportView(myBookingsTable);
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(refreshBtn)
+                    .addComponent(cancelBookingBtn))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 96, Short.MAX_VALUE)
+                .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(cancelBookingBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 43, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(21, 21, 21))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane3, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
+        );
+
+        jTabbedPane1.addTab("My Bookings", jPanel2);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -140,14 +219,14 @@ public class UserGui extends javax.swing.JFrame {
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(jTabbedPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jTabbedPane1)
                 .addContainerGap())
         );
 
@@ -172,15 +251,47 @@ public class UserGui extends javax.swing.JFrame {
     }
     List<soft.appointment.domain.Appointment> availableSlots = appointmentManager.getAvailableSlots();
     Appointment selectedAppt = availableSlots.get(selectedRow);
-     String result = appointmentManager.bookAppointment(selectedAppt);
+     String result = appointmentManager.bookAppointment(currentUser, selectedAppt);
      if (result.equals("SUCCESS")) {
         JOptionPane.showMessageDialog(this, "Success! Your appointment is confirmed.");
         refreshTable(); 
+                 refreshMyBookingsTable();
+
     } else {
         
         JOptionPane.showMessageDialog(this, "Booking Failed: " + result);
     }
     }//GEN-LAST:event_bookBtnActionPerformed
+
+    private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_refreshBtnActionPerformed
+        // TODO add your handling code here:
+         refreshMyBookingsTable();
+    }//GEN-LAST:event_refreshBtnActionPerformed
+
+    private void cancelBookingBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cancelBookingBtnActionPerformed
+        // TODO add your handling code here:
+         int row = myBookingsTable.getSelectedRow();
+    if (row == -1) {
+        JOptionPane.showMessageDialog(this, "Select a booking to cancel!");
+        return;
+    }
+
+    List<Appointment> mySlots = appointmentManager.getMyBookings(currentUser.getUsername());
+    Appointment toCancel = mySlots.get(row);
+
+    if (appointmentManager.cancelBooking(currentUser,toCancel)) {
+        JOptionPane.showMessageDialog(this, "Booking Cancelled!");
+        refreshTable();           
+        refreshMyBookingsTable(); 
+    } else {
+        JOptionPane.showMessageDialog(this, "Error: You can only cancel future appointments.");
+    }
+    }//GEN-LAST:event_cancelBookingBtnActionPerformed
+
+    private void AppointmentsTableActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AppointmentsTableActionPerformed
+        // TODO add your handling code here:
+        refreshTable();
+    }//GEN-LAST:event_AppointmentsTableActionPerformed
 
     /**
      * @param args the command line arguments
@@ -208,28 +319,55 @@ public class UserGui extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton AppointmentsTable;
     private javax.swing.JTable appointmentsTable;
     private javax.swing.JButton bookBtn;
+    private javax.swing.JButton cancelBookingBtn;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JScrollPane jScrollPane3;
+    private javax.swing.JTabbedPane jTabbedPane1;
     private javax.swing.JButton logoutBtn;
+    private javax.swing.JTable myBookingsTable;
+    private javax.swing.JButton refreshBtn;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
+private void refreshMyBookingsTable() {
+    DefaultTableModel model = (DefaultTableModel) myBookingsTable.getModel();
+    model.setRowCount(0); 
 
+    // Get only bookings belonging to THIS user
+    List<Appointment> mySlots = appointmentManager.getMyBookings(currentUser.getUsername());
+
+    for (Appointment a : mySlots) {
+        model.addRow(new Object[]{
+            a.getDate(), 
+            a.getStartTime(), 
+            "Confirmed"
+        });
+    }
+}
     private void refreshTable() {
- DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-    model.setRowCount(0); // Clear table
+    DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
+    model.setRowCount(0); 
 
     List<Appointment> list = appointmentManager.getAvailableSlots();
 
     for (Appointment a : list) {
-        if (a.isAvailable()) {
-            model.addRow(new Object[]{
-                a.getDate(), 
-                a.getStartTime(), 
-                "Available"
-            });
+       
+        if (a.getParticipants().contains(currentUser.getUsername())) {
+            continue; 
         }
-    }    }
+
+        int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
+        
+        model.addRow(new Object[]{
+            a.getDate(), 
+            a.getStartTime(), 
+            "Available (" + spotsLeft + " left)"
+        });
+    }
+}
 }

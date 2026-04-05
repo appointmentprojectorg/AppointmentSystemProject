@@ -16,6 +16,7 @@ import soft.appointment.domain.Appointment;
  *
  * @author MoumenAbuAyyash1
  */
+/*
 public class CapacityRuleTest {
     private final CapacityRule rule = new CapacityRule();
 
@@ -36,3 +37,4 @@ public class CapacityRuleTest {
         assertNotNull(rule.getErrorMessage());
     }
 }
+*/

@@ -2,6 +2,8 @@ package soft.appointment.domain;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * this represents a single appointment slot 
@@ -16,6 +18,7 @@ public class Appointment {
      private String status;
     private int maxParticipants;
     private int currentParticipants;
+    private List<String> participants = new ArrayList<>();
 
     /**
      * Creates a new appointment slot.
@@ -31,7 +34,19 @@ public class Appointment {
         this.maxParticipants = 1; // default value ( 1 person)
         this.currentParticipants = 0;
     }
+public java.util.List<String> getParticipants() { 
+    return participants; 
+}
 
+public void addParticipant(String username) {
+    if (!participants.contains(username)) {
+        this.participants.add(username);
+    }
+}
+public void removeParticipant(String username) {
+    this.participants.remove(username);
+}
+    
     public LocalDate getDate() { return date; }
     public LocalTime getStartTime() { return startTime; }
     public boolean isAvailable() { return available; }

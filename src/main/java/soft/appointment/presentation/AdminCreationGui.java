@@ -132,7 +132,7 @@ public class AdminCreationGui extends javax.swing.JFrame {
         return;
     }
          LoginManager manager = new LoginManager();
-          int result = manager.registerUser(user, pass, pass, "ADMIN");
+          int result = manager.registerUser(user, pass, pass, "ADMIN","adminemaildummy");
     
     if (result == 1) {
         javax.swing.JOptionPane.showMessageDialog(this, "Admin '" + user + "' Created Successfully!");

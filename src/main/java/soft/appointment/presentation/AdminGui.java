@@ -6,6 +6,7 @@ package soft.appointment.presentation;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 import soft.appointment.domain.Appointment;
@@ -39,6 +40,8 @@ public class AdminGui extends javax.swing.JFrame {
         initComponents();
     }
     public AdminGui(soft.appointment.domain.User user, soft.appointment.service.LoginManager manager) {
+        
+
         this.currentUser = user;
         this.loginManager = manager;
         initComponents();
@@ -46,6 +49,7 @@ public class AdminGui extends javax.swing.JFrame {
 com.github.lgooddatepicker.components.TimePickerSettings timeSettings = dateTimePicker.timePicker.getSettings();
 dateSettings.setAllowKeyboardEditing(false);
 timeSettings.setAllowKeyboardEditing(false);
+maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1));
 
    
     
@@ -74,6 +78,8 @@ timeSettings.setAllowKeyboardEditing(false);
         welcomeLabel = new javax.swing.JLabel();
         deleteBtn = new javax.swing.JButton();
         refreshBtn = new javax.swing.JButton();
+        maxParticipentsSpinner = new javax.swing.JSpinner();
+        jLabel2 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AdminBoard");
@@ -84,14 +90,14 @@ timeSettings.setAllowKeyboardEditing(false);
 
             },
             new String [] {
-                "Date", "Time", "Status"
+                "Date", "Time", "Status", "Max Capacity"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -109,6 +115,7 @@ timeSettings.setAllowKeyboardEditing(false);
             appointmentsTable.getColumnModel().getColumn(0).setResizable(false);
             appointmentsTable.getColumnModel().getColumn(1).setResizable(false);
             appointmentsTable.getColumnModel().getColumn(2).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(3).setResizable(false);
         }
 
         addAppointmentBtn.setText("Add Appointment");
@@ -117,11 +124,11 @@ timeSettings.setAllowKeyboardEditing(false);
         logoutBtn.setText("Logout");
         logoutBtn.addActionListener(this::logoutBtnActionPerformed);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jLabel1.setText("Admin Board");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
 
-        welcomeLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
         welcomeLabel.setText("Welcome Label");
+        welcomeLabel.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
 
         deleteBtn.setText("Delete Appointment");
         deleteBtn.addActionListener(this::deleteBtnActionPerformed);
@@ -129,47 +136,60 @@ timeSettings.setAllowKeyboardEditing(false);
         refreshBtn.setText("Refresh");
         refreshBtn.addActionListener(this::refreshBtnActionPerformed);
 
+        jLabel2.setText("Max Participents:");
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addComponent(dateTimePicker, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGroup(jPanel1Layout.createSequentialGroup()
-                            .addContainerGap()
-                            .addComponent(jLabel1)
-                            .addGap(84, 84, 84)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(addAppointmentBtn)
-                            .addComponent(deleteBtn))))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(dateTimePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(maxParticipentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(40, 40, 40))))
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(jLabel1)
+                                    .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(addAppointmentBtn)
+                                    .addComponent(deleteBtn))))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(24, Short.MAX_VALUE))
+                .addContainerGap(18, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(welcomeLabel)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(dateTimePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(maxParticipentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jLabel2))
+                        .addGap(32, 32, 32)
                         .addComponent(addAppointmentBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(32, 32, 32))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -202,6 +222,8 @@ timeSettings.setAllowKeyboardEditing(false);
  */
     private void addAppointmentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAppointmentBtnActionPerformed
         // TODO add your handling code here:
+            int maxCap = (int) maxParticipentsSpinner.getValue(); 
+
              java.time.LocalDate date = dateTimePicker.datePicker.getDate();
     java.time.LocalTime time = dateTimePicker.timePicker.getTime();
     if (date == null || time == null) {
@@ -209,6 +231,8 @@ timeSettings.setAllowKeyboardEditing(false);
         return;
     }
     Appointment newAppt = new Appointment(date, time);
+        newAppt.setMaxParticipants(maxCap); 
+
      if (appointmentManager.addNewSlot(newAppt)) {
         JOptionPane.showMessageDialog(this, "Slot added successfully!");
         refreshTable();
@@ -287,9 +311,11 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
     private com.github.lgooddatepicker.components.DateTimePicker dateTimePicker;
     private javax.swing.JButton deleteBtn;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton logoutBtn;
+    private javax.swing.JSpinner maxParticipentsSpinner;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
@@ -300,13 +326,14 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
     DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
     model.setRowCount(0); 
 
-    java.util.List<soft.appointment.domain.Appointment> list = appointmentManager.getAvailableSlots();
+List<soft.appointment.domain.Appointment> list = appointmentManager.getAllSlots();
 
     for (soft.appointment.domain.Appointment a : list) {
         model.addRow(new Object[]{
             a.getDate(), 
             a.getStartTime(), 
-            a.isAvailable() ? "Available" : "Booked"
+            a.isAvailable() ? "Available" : "Booked",
+            a.getMaxParticipants() 
         });
     }
 }

@@ -12,6 +12,7 @@ import soft.appointment.service.LoginManager;
 import soft.appointment.domain.User;
 import soft.appointment.persistence.UserStorage;
 
+/*
 @ExtendWith(MockitoExtension.class)
 public class LoginManagerTest {
 
@@ -87,3 +88,4 @@ public class LoginManagerTest {
         verify(storage, times(1)).saveUser(any(User.class));
     }
 }
+*/

@@ -6,6 +6,7 @@ import java.util.List;
 import soft.appointment.domain.Appointment;
 import soft.appointment.domain.User;
 import soft.appointment.persistence.AppointmentStorage;
+import soft.appointment.persistence.UserStorage;
 
 /**
  * Manages the business logic for appointments by talking to the Storage layer.
@@ -47,6 +48,20 @@ public class AppointmentManager {
     public List<Appointment> getAllSlots() {
     // This returns the whole list from the file
     return storage.loadAllAppointments();
+}
+    
+    public void sendReminders(Appointment appt, NotificationManager nm, UserStorage userStorage) {
+    List<String> usernames = appt.getParticipants();
+    
+    for (String username : usernames) {
+        User user = userStorage.getUserByUsername(username);
+        
+        if (user != null && user.getEmail() != null) {
+            String msg = "Reminder: You have an appointment on " + 
+                         appt.getDate() + " at " + appt.getStartTime();
+            nm.notifyAll(user, msg);
+        }
+    }
 }
 
     /**

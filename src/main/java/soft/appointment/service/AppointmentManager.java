@@ -7,6 +7,8 @@ import soft.appointment.domain.Appointment;
 import soft.appointment.domain.User;
 import soft.appointment.persistence.AppointmentStorage;
 import soft.appointment.persistence.UserStorage;
+import soft.appointment.strategy.AppointmentRuleStrategy;
+import soft.appointment.strategy.*;
 
 /**
  * Manages the business logic for appointments by talking to the Storage layer.
@@ -105,11 +107,25 @@ public class AppointmentManager {
     }
     
     public boolean addNewSlot(Appointment appt) {
-        if (isSlotValid(appt)) {
-            storage.saveAppointment(appt);
-            return true;
+        if (!isSlotValid(appt)) {
+
+            return false;
         }
-        return false;
+        AppointmentRuleStrategy strategy=getStrategy(appt.gettype());
+        if (strategy!=null && !strategy.isValid(appt)){
+            return false;
+        }
+
+        List<Appointment> all = storage.loadAllAppointments();
+        for (Appointment a : all) {
+            if (a.getDate().equals(appt.getDate()) &&
+                    a.getStartTime().equals(appt.getStartTime())) {
+                return false;
+            }
+        }
+
+        storage.saveAppointment(appt);
+        return true;
     }
 
     public void removeSlot(Appointment appt) {
@@ -162,5 +178,20 @@ public class AppointmentManager {
     storage.deleteAppointment(appt);
     storage.saveAppointment(appt);
     return true;
+}
+private AppointmentRuleStrategy getStrategy(String type){
+    if (type == null) return null;
+
+    return switch (type.toLowerCase()) {
+        case "group" -> new GroupAppointmentStrategy();
+        case "individual" -> new IndividualAppointmentStrategy();
+        case "urgent" -> new UrgentAppointmentStrategy();
+        case "followup" -> new FollowUpAppointmentStrategy();
+        case "virtual" -> new VirtualAppointmentStrategy();
+        case "assessment" -> new AssessmentAppointmentStrategy();
+        case "inperson" -> new InPersonAppointmentStrategy();
+        default -> null;
+    };
+
 }
 }

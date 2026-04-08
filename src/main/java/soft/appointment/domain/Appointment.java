@@ -19,7 +19,8 @@ public class Appointment {
     private int maxParticipants;
     private int currentParticipants;
     private List<String> participants = new ArrayList<>();
-
+    private String type;
+    private int duration;
     /**
      * Creates a new appointment slot.
      * 
@@ -41,10 +42,12 @@ public java.util.List<String> getParticipants() {
 public void addParticipant(String username) {
     if (!participants.contains(username)) {
         this.participants.add(username);
+        currentParticipants++;
     }
 }
 public void removeParticipant(String username) {
     this.participants.remove(username);
+    currentParticipants--;
 }
     
     public LocalDate getDate() { return date; }
@@ -59,4 +62,17 @@ public void removeParticipant(String username) {
 
     public int getCurrentParticipants() { return currentParticipants; }
     public void setCurrentParticipants(int currentParticipants) { this.currentParticipants = currentParticipants; }
+    public String gettype(){
+        return type;
+    }
+    public void setType(String type){
+        this.type=type;
+    }
+    public int getDuration(){
+        return duration;
+    }
+    public void setdDuration(int duration){
+        this.duration=duration;
+    }
 }
+

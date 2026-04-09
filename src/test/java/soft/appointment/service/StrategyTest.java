@@ -74,9 +74,9 @@ public class StrategyTest {
                 LocalDate.now().plusDays(1),
                 LocalTime.of(10, 0)
         );
-        appt.setdDuration(30);
+        appt.setDuration(30);
         assertTrue(strategy.isValid(appt));
-        appt.setdDuration(60);
+        appt.setDuration(60);
         assertFalse(strategy.isValid(appt));
     }
     

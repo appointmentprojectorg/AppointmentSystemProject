@@ -53,12 +53,14 @@ public class MainLoginGui extends javax.swing.JFrame {
         jLabel4 = new javax.swing.JLabel();
         jLabel8 = new javax.swing.JLabel();
         emailField = new javax.swing.JTextField();
+        jPanel1 = new javax.swing.JPanel();
+        openAdminCreationBtn = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
 
-        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel5.setText("Login");
+        jLabel5.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
         jLabel6.setText("Username:");
 
@@ -109,8 +111,8 @@ public class MainLoginGui extends javax.swing.JFrame {
 
         loginTabbedPanel.addTab("Login", loginPanel);
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel1.setText("Registration");
+        jLabel1.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
         jLabel2.setText("Username:");
 
@@ -181,6 +183,28 @@ public class MainLoginGui extends javax.swing.JFrame {
         );
 
         loginTabbedPanel.addTab("Register", registerPanel);
+
+        openAdminCreationBtn.setText("Open Admin Creation");
+        openAdminCreationBtn.addActionListener(this::openAdminCreationBtnActionPerformed);
+
+        javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
+        jPanel1.setLayout(jPanel1Layout);
+        jPanel1Layout.setHorizontalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(107, 107, 107)
+                .addComponent(openAdminCreationBtn)
+                .addContainerGap(109, Short.MAX_VALUE))
+        );
+        jPanel1Layout.setVerticalGroup(
+            jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGap(97, 97, 97)
+                .addComponent(openAdminCreationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(115, Short.MAX_VALUE))
+        );
+
+        loginTabbedPanel.addTab("Admin Creation", jPanel1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -265,6 +289,13 @@ int result = loginManager.registerUser(user, pass, confirm, "USER", email);
         // TODO add your handling code here:
     }//GEN-LAST:event_emailFieldActionPerformed
 
+    private void openAdminCreationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openAdminCreationBtnActionPerformed
+        // TODO add your handling code here:
+        AdminCreationGui adminWindow =new AdminCreationGui();
+         adminWindow.setVisible(true);
+
+    }//GEN-LAST:event_openAdminCreationBtnActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -294,8 +325,11 @@ int result = loginManager.registerUser(user, pass, confirm, "USER", email);
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPasswordField confirmPasswordField;
+    private javax.swing.JButton createAdminBtn;
     private javax.swing.JTextField emailField;
     private javax.swing.JLabel jLabel1;
+    private javax.swing.JLabel jLabel10;
+    private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -303,13 +337,19 @@ int result = loginManager.registerUser(user, pass, confirm, "USER", email);
     private javax.swing.JLabel jLabel6;
     private javax.swing.JLabel jLabel7;
     private javax.swing.JLabel jLabel8;
+    private javax.swing.JLabel jLabel9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
     private javax.swing.JButton loginBtn;
     private javax.swing.JPanel loginPanel;
     private javax.swing.JTabbedPane loginTabbedPanel;
+    private javax.swing.JButton openAdminCreationBtn;
     private javax.swing.JPasswordField passwordField;
+    private javax.swing.JTextField passwordField1;
     private javax.swing.JPasswordField passwordLoginField;
     private javax.swing.JButton registerBtn;
     private javax.swing.JPanel registerPanel;
+    private javax.swing.JTextField userField;
     private javax.swing.JTextField usernameField;
     private javax.swing.JTextField usernameLoginField;
     // End of variables declaration//GEN-END:variables

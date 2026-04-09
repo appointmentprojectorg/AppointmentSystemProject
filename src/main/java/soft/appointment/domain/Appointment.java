@@ -34,6 +34,8 @@ public class Appointment {
         this.status = "Available";
         this.maxParticipants = 1; // default value ( 1 person)
         this.currentParticipants = 0;
+         this.type = "General"; // Prevents crashes
+        this.duration = 30;    // Default duration
     }
 public java.util.List<String> getParticipants() { 
     return participants; 
@@ -71,8 +73,10 @@ public void removeParticipant(String username) {
     public int getDuration(){
         return duration;
     }
-    public void setdDuration(int duration){
+    public void setDuration(int duration){
         this.duration=duration;
     }
+
+    
 }
 

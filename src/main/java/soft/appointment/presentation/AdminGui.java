@@ -84,6 +84,10 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
         maxParticipentsSpinner = new javax.swing.JSpinner();
         jLabel2 = new javax.swing.JLabel();
         sendNotificationBtn = new javax.swing.JButton();
+        jLabel3 = new javax.swing.JLabel();
+        typeComboBox = new javax.swing.JComboBox<>();
+        jLabel4 = new javax.swing.JLabel();
+        durationSpinner = new javax.swing.JSpinner();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("AdminBoard");
@@ -94,14 +98,14 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
 
             },
             new String [] {
-                "Date", "Time", "Status", "Max Capacity"
+                "Date", "Time", "Status", "Participants", "Max Capacity", "Type", "Duration"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false
+                false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -120,6 +124,9 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
             appointmentsTable.getColumnModel().getColumn(1).setResizable(false);
             appointmentsTable.getColumnModel().getColumn(2).setResizable(false);
             appointmentsTable.getColumnModel().getColumn(3).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(4).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(5).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(6).setResizable(false);
         }
 
         addAppointmentBtn.setText("Add Appointment");
@@ -145,6 +152,15 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
         sendNotificationBtn.setText("Send Notification");
         sendNotificationBtn.addActionListener(this::sendNotificationBtnActionPerformed);
 
+        jLabel3.setText("Type:");
+
+        typeComboBox.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "General", "Urgent", "Follow-up", "Assessment", "Virtual", "In-person", "Individual", "Group" }));
+        typeComboBox.addActionListener(this::typeComboBoxActionPerformed);
+
+        jLabel4.setText("Duration:");
+
+        durationSpinner.setModel(new javax.swing.SpinnerNumberModel(30, 15, 120, 15));
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -153,42 +169,56 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                            .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
                                 .addContainerGap()
                                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                                    .addComponent(dateTimePicker, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(dateTimePicker, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED))
-                                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                        .addComponent(jLabel2)
-                                        .addGap(18, 18, 18)
-                                        .addComponent(maxParticipentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(40, 40, 40))))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addContainerGap()
                                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                            .addComponent(jLabel1)
-                                            .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                            .addComponent(addAppointmentBtn)
-                                            .addComponent(deleteBtn))))
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)))
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 470, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                                .addComponent(jLabel2)
+                                                .addGap(18, 18, 18)
+                                                .addComponent(maxParticipentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addComponent(jLabel4)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(durationSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                                    .addGap(56, 56, 56))
+                                                .addGroup(jPanel1Layout.createSequentialGroup()
+                                                    .addComponent(jLabel3)
+                                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                                                    .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, 120, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                        .addGap(40, 40, 40))
+                                    .addComponent(jLabel1)
+                                    .addComponent(welcomeLabel, javax.swing.GroupLayout.PREFERRED_SIZE, 209, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                        .addGap(0, 1, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(sendNotificationBtn)))
-                .addContainerGap(18, Short.MAX_VALUE))
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addAppointmentBtn)
+                            .addComponent(deleteBtn)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(sendNotificationBtn)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 15, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
+                        .addGap(379, 379, 379)
+                        .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 91, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap(98, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 5, Short.MAX_VALUE)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 557, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addContainerGap())))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addGroup(javax.swing.GroupLayout.Alignment.LEADING, jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(welcomeLabel)
@@ -198,14 +228,22 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(maxParticipentsSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(jLabel2))
-                        .addGap(32, 32, 32)
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel3)
+                            .addComponent(typeComboBox, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel4)
+                            .addComponent(durationSpinner, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
                         .addComponent(addAppointmentBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 225, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(sendNotificationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 32, Short.MAX_VALUE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(deleteBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(sendNotificationBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE))
+                .addGap(12, 12, 12)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(logoutBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(refreshBtn, javax.swing.GroupLayout.PREFERRED_SIZE, 37, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -237,25 +275,28 @@ maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1))
  */
     private void addAppointmentBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addAppointmentBtnActionPerformed
         // TODO add your handling code here:
-            int maxCap = (int) maxParticipentsSpinner.getValue(); 
-
-             java.time.LocalDate date = dateTimePicker.datePicker.getDate();
+              int maxCap = (int) maxParticipentsSpinner.getValue(); 
+    java.time.LocalDate date = dateTimePicker.datePicker.getDate();
     java.time.LocalTime time = dateTimePicker.timePicker.getTime();
+    
     if (date == null || time == null) {
         JOptionPane.showMessageDialog(this, "Please select both Date and Time!");
         return;
     }
-    Appointment newAppt = new Appointment(date, time);
-        newAppt.setMaxParticipants(maxCap); 
 
-     if (appointmentManager.addNewSlot(newAppt)) {
+    Appointment newAppt = new Appointment(date, time);
+    newAppt.setMaxParticipants(maxCap); 
+    newAppt.setType(typeComboBox.getSelectedItem().toString());
+    newAppt.setDuration((int) durationSpinner.getValue());
+
+    String result = appointmentManager.addNewSlot(newAppt);
+
+    if (result.equals("SUCCESS")) {
         JOptionPane.showMessageDialog(this, "Slot added successfully!");
         refreshTable();
     } else {
-        // This triggers if the Manager says isSlotValid is false
-        JOptionPane.showMessageDialog(this, "Error: You cannot create appointments in the past!");
+        JOptionPane.showMessageDialog(this, result, "Creation Failed", JOptionPane.WARNING_MESSAGE);
     }
-    
 
     }//GEN-LAST:event_addAppointmentBtnActionPerformed
 /**
@@ -320,6 +361,20 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
     JOptionPane.showMessageDialog(this, "Notifications sent to all participants!");
     }//GEN-LAST:event_sendNotificationBtnActionPerformed
 
+    private void typeComboBoxActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_typeComboBoxActionPerformed
+        // TODO add your handling code here:
+            String selectedType = typeComboBox.getSelectedItem().toString();
+             if (selectedType.equalsIgnoreCase("In-person")) {
+        maxParticipentsSpinner.setValue(3); // Set to 3
+        ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(3);
+    } else if (selectedType.equalsIgnoreCase("Virtual")) {
+        ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(10);
+    } else {
+        ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(99);
+    }
+
+    }//GEN-LAST:event_typeComboBoxActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -350,31 +405,39 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
     private javax.swing.JTable appointmentsTable;
     private com.github.lgooddatepicker.components.DateTimePicker dateTimePicker;
     private javax.swing.JButton deleteBtn;
+    private javax.swing.JSpinner durationSpinner;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JButton logoutBtn;
     private javax.swing.JSpinner maxParticipentsSpinner;
     private javax.swing.JButton refreshBtn;
     private javax.swing.JButton sendNotificationBtn;
+    private javax.swing.JComboBox<String> typeComboBox;
     private javax.swing.JLabel welcomeLabel;
     // End of variables declaration//GEN-END:variables
 /**
  * get data from manager and fill the table.
  */
-   private void refreshTable() {
+ private void refreshTable() {
     DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
     model.setRowCount(0); 
 
-List<soft.appointment.domain.Appointment> list = appointmentManager.getAllSlots();
+    List<soft.appointment.domain.Appointment> list = appointmentManager.getAllSlots();
 
     for (soft.appointment.domain.Appointment a : list) {
+        
         model.addRow(new Object[]{
-            a.getDate(), 
-            a.getStartTime(), 
-            a.isAvailable() ? "Available" : "Booked",
-            a.getMaxParticipants() 
+            a.getDate(),                               
+            a.getStartTime(),                          
+            a.isAvailable() ? "Available" : "Full",    
+            a.getCurrentParticipants() + " / " + a.getMaxParticipants(), 
+            a.getMaxParticipants(),                     
+            a.gettype(),                                
+            a.getDuration()                             
         });
     }
 }

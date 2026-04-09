@@ -4,6 +4,9 @@
 
 package soft.appointment;
 
+import com.formdev.flatlaf.FlatDarculaLaf;
+import soft.appointment.presentation.MainLoginGui;
+
 /**
  *
  * @author user
@@ -11,6 +14,9 @@ package soft.appointment;
 public class AppointmentSystemProject {
 
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+         FlatDarculaLaf.setup();
+         MainLoginGui mine= new MainLoginGui();
+         mine.setVisible(true);
+         
     }
 }

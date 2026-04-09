@@ -4,6 +4,6 @@ public class VirtualAppointmentStrategy implements AppointmentRuleStrategy{
 
     @Override
     public boolean isValid(Appointment appt) {
-        return appt.getCurrentParticipants() <= 10;
+        return appt.getMaxParticipants() <= 10;
     }
 }

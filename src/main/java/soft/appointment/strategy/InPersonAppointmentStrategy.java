@@ -4,6 +4,5 @@ public class InPersonAppointmentStrategy implements AppointmentRuleStrategy {
 
     @Override
     public boolean isValid(Appointment appt) {
-        return appt.getCurrentParticipants() <= 3;
-    }
+return appt.getMaxParticipants() <= 3;    }
 }

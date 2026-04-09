@@ -40,7 +40,7 @@ public class AdminCreationGui extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         createAdminBtn = new javax.swing.JButton();
 
-        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setResizable(false);
 
         jLabel1.setText("Username:");
@@ -49,8 +49,8 @@ public class AdminCreationGui extends javax.swing.JFrame {
 
         userField.addActionListener(this::userFieldActionPerformed);
 
-        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
         jLabel3.setText("Admin Creation");
+        jLabel3.setFont(new java.awt.Font("Segoe UI", 1, 18)); // NOI18N
 
         createAdminBtn.setText("Create");
         createAdminBtn.addActionListener(this::createAdminBtnActionPerformed);

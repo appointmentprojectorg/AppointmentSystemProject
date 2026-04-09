@@ -33,19 +33,20 @@ public class AppointmentManager {
     /**
      * Checks if an appointment slot is valid for creation.
      */
-    public boolean isSlotValid(Appointment appt) {
-        java.time.LocalDateTime selected = java.time.LocalDateTime.of(appt.getDate(), appt.getStartTime());
-        if (selected.isBefore(java.time.LocalDateTime.now())) {
-            return false;
-        }
-
-        calculator.setStrategy(new DurationRule());
-        if (!calculator.validate(appt)) {
-            return false;
-        }
-
-        return true; 
+   public String isSlotValid(Appointment appt) {
+    java.time.LocalDateTime selected = java.time.LocalDateTime.of(appt.getDate(), appt.getStartTime());
+    
+    if (selected.isBefore(java.time.LocalDateTime.now())) {
+        return "Error: Appointment date and time cannot be in the past.";
     }
+
+    calculator.setStrategy(new DurationRule());
+    if (!calculator.validate(appt)) {
+        return "Error: Appointments must be scheduled in 30-minute intervals (e.g., :00 or :30).";
+    }
+
+    return "VALID"; 
+}
     
     public List<Appointment> getAllSlots() {
     // This returns the whole list from the file
@@ -69,31 +70,42 @@ public class AppointmentManager {
     /**
      * Processes a booking for a specific slot.
      */
-   public String bookAppointment(User user, Appointment appt) {
-        calculator.setStrategy(new DurationRule());
-        if (!calculator.validate(appt)) {
-            return calculator.getErrorMessage();
-        }
+  public String bookAppointment(User user, Appointment appt) {
+    calculator.setStrategy(new DurationRule());
+    if (!calculator.validate(appt)) {
+        return calculator.getErrorMessage();
+    }
 
-        calculator.setStrategy(new CapacityRule());
-        if (!calculator.validate(appt)) {
-            return calculator.getErrorMessage();
-        }
+    calculator.setStrategy(new CapacityRule());
+    if (!calculator.validate(appt)) {
+        return calculator.getErrorMessage();
+    }
 
-        appt.setCurrentParticipants(appt.getCurrentParticipants() + 1);
-        
-        if (appt.getCurrentParticipants() >= appt.getMaxParticipants()) {
-            appt.setAvailable(false);
-            appt.setStatus("Confirmed");
+    AppointmentRuleStrategy typeStrategy = getStrategy(appt.gettype());
+    if (typeStrategy != null && !typeStrategy.isValid(appt)) {
+        return "Error: Booking denied due to " + appt.gettype() + " appointment restrictions.";
+    }
+        List<Appointment> myBookings = getMyBookings(user.getUsername());
+  for (Appointment mine : myBookings) {
+        if (mine.getDate().equals(appt.getDate()) && mine.getStartTime().equals(appt.getStartTime())) {
+            return "Error: You already have another booking at this time!";
         }
-        
+    }
+
     appt.addParticipant(user.getUsername()); 
 
-        storage.deleteAppointment(appt);
-        storage.saveAppointment(appt);
-        
-        return "SUCCESS";
+    if (appt.getCurrentParticipants() >= appt.getMaxParticipants()) {
+        appt.setAvailable(false);
+        appt.setStatus("Confirmed");
+    } else {
+        appt.setStatus("Partially Booked"); 
     }
+
+    storage.deleteAppointment(appt);
+    storage.saveAppointment(appt);
+    
+    return "SUCCESS";
+}
 
     public List<Appointment> getAvailableSlots() {
         List<Appointment> all = storage.loadAllAppointments();
@@ -106,27 +118,45 @@ public class AppointmentManager {
         return availableOnly;
     }
     
-    public boolean addNewSlot(Appointment appt) {
-        if (!isSlotValid(appt)) {
+ public String addNewSlot(Appointment appt) {
+       String timeValidation = isSlotValid(appt);
+     if (!timeValidation.equals("VALID")) {
+        return timeValidation;
+    }
 
-            return false;
-        }
-        AppointmentRuleStrategy strategy=getStrategy(appt.gettype());
-        if (strategy!=null && !strategy.isValid(appt)){
-            return false;
-        }
+    AppointmentRuleStrategy strategy = getStrategy(appt.gettype());
+    if (strategy != null && !strategy.isValid(appt)) {
+        return switch (appt.gettype().toLowerCase()) {
+    case "in-person" -> "Error: In-person appointments are limited to a maximum of 3 participants.";
+    case "virtual" -> "Error: Virtual appointments are limited to a maximum of 10 participants.";
+    case "follow-up" -> "Error: Follow-up appointments cannot exceed a 30-minute duration.";
+    case "assessment" -> "Error: Assessment appointments must be exactly 60 minutes long.";
+    case "urgent" -> "Error: Urgent appointments must be scheduled for today or tomorrow.";
+    case "individual" -> "Error: Individual appointments are restricted to 1 participant only.";
+    default -> "Error: The selected appointment type violates system business rules.";
+};
+    }
 
-        List<Appointment> all = storage.loadAllAppointments();
-        for (Appointment a : all) {
-            if (a.getDate().equals(appt.getDate()) &&
-                    a.getStartTime().equals(appt.getStartTime())) {
-                return false;
+    List<Appointment> all = storage.loadAllAppointments();
+      java.time.LocalTime newStart = appt.getStartTime();
+    java.time.LocalTime newEnd = newStart.plusMinutes(appt.getDuration());
+    
+   for (Appointment existing : all) {
+        if (existing.getDate().equals(appt.getDate())) {
+            java.time.LocalTime existingStart = existing.getStartTime();
+            java.time.LocalTime existingEnd = existingStart.plusMinutes(existing.getDuration());
+
+            
+            if (newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd)) {
+                return "Error: This time range overlaps with an existing [" + 
+                        existing.gettype() + "] appointment (" + existingStart + "-" + existingEnd + ")";
             }
         }
-
-        storage.saveAppointment(appt);
-        return true;
     }
+
+    storage.saveAppointment(appt);
+    return "SUCCESS";
+}
 
     public void removeSlot(Appointment appt) {
         storage.deleteAppointment(appt);

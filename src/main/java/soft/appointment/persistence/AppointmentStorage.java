@@ -30,12 +30,14 @@ public class AppointmentStorage {
         }
 
         writer.println(appt.getDate() + "," + 
-                       appt.getStartTime() + "," + 
-                       appt.isAvailable() + "," + 
-                       appt.getStatus() + "," + 
-                       appt.getMaxParticipants() + "," + 
-                       appt.getCurrentParticipants() + "," + 
-                       participantNames); 
+               appt.getStartTime() + "," + 
+               appt.isAvailable() + "," + 
+               appt.getStatus() + "," + 
+               appt.getMaxParticipants() + "," + 
+               appt.getCurrentParticipants() + "," + 
+               participantNames + "," +
+               appt.gettype() + "," +           
+               appt.getDuration());             
     } catch (IOException e) { 
     }
 }
@@ -74,7 +76,12 @@ public class AppointmentStorage {
             appt.addParticipant(n);
         }
     }
-    
+    if (p.length >= 8) {
+    appt.setType(p[7]); 
+}
+if (p.length >= 9) {
+    appt.setDuration(Integer.parseInt(p[8])); 
+}
     list.add(appt);
 }
         } catch (IOException e) {
@@ -95,9 +102,9 @@ public void deleteAppointment(Appointment target) {
             String names = String.join(";", a.getParticipants());
             if (names.isEmpty()) names = "NONE";
 
-            writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable() + "," +
-                           a.getStatus() + "," + a.getMaxParticipants() + "," + a.getCurrentParticipants()
-            + "," + names); 
+           writer.println(a.getDate() + "," + a.getStartTime() + "," + a.isAvailable() + "," +
+               a.getStatus() + "," + a.getMaxParticipants() + "," + a.getCurrentParticipants()
+               + "," + names + "," + a.gettype() + "," + a.getDuration());
         }
     } catch (IOException e) {
     }

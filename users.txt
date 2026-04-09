@@ -2,3 +2,6 @@ admin,admin,ADMIN,adminemaildummy
 user,user,USER,fsdafasf@bateh
 user1,user,USER,user
 moumen,0000,USER,sajem16465@algarr.com
+newadmin,newadmin,ADMIN,adminemaildummy
+user2,user2,USER,usergmail
+newadmin1,newadmin1,ADMIN,adminemaildummy

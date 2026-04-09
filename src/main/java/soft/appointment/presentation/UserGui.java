@@ -77,14 +77,14 @@ public class UserGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Date", "Time", "Status"
+                "Date", "Time", "Status", "Type", "Duration"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -98,6 +98,13 @@ public class UserGui extends javax.swing.JFrame {
         appointmentsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         appointmentsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane1.setViewportView(appointmentsTable);
+        if (appointmentsTable.getColumnModel().getColumnCount() > 0) {
+            appointmentsTable.getColumnModel().getColumn(0).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(1).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(2).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(3).setResizable(false);
+            appointmentsTable.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         bookBtn.setText("Book");
         bookBtn.addActionListener(this::bookBtnActionPerformed);
@@ -161,14 +168,14 @@ public class UserGui extends javax.swing.JFrame {
 
             },
             new String [] {
-                "Date", "Time", "Status"
+                "Date", "Time", "Status", "Type", "Duration"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.String.class, java.lang.String.class, java.lang.String.class
+                java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -182,6 +189,13 @@ public class UserGui extends javax.swing.JFrame {
         myBookingsTable.setAutoResizeMode(javax.swing.JTable.AUTO_RESIZE_ALL_COLUMNS);
         myBookingsTable.getTableHeader().setReorderingAllowed(false);
         jScrollPane3.setViewportView(myBookingsTable);
+        if (myBookingsTable.getColumnModel().getColumnCount() > 0) {
+            myBookingsTable.getColumnModel().getColumn(0).setResizable(false);
+            myBookingsTable.getColumnModel().getColumn(1).setResizable(false);
+            myBookingsTable.getColumnModel().getColumn(2).setResizable(false);
+            myBookingsTable.getColumnModel().getColumn(3).setResizable(false);
+            myBookingsTable.getColumnModel().getColumn(4).setResizable(false);
+        }
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -259,7 +273,7 @@ public class UserGui extends javax.swing.JFrame {
 
     } else {
         
-        JOptionPane.showMessageDialog(this, "Booking Failed: " + result);
+    JOptionPane.showMessageDialog(this, result, "Booking Error", JOptionPane.ERROR_MESSAGE);
     }
     }//GEN-LAST:event_bookBtnActionPerformed
 
@@ -338,25 +352,25 @@ private void refreshMyBookingsTable() {
     DefaultTableModel model = (DefaultTableModel) myBookingsTable.getModel();
     model.setRowCount(0); 
 
-    // Get only bookings belonging to THIS user
     List<Appointment> mySlots = appointmentManager.getMyBookings(currentUser.getUsername());
 
     for (Appointment a : mySlots) {
         model.addRow(new Object[]{
             a.getDate(), 
             a.getStartTime(), 
-            "Confirmed"
+            "Confirmed",
+            a.gettype(),     
+            a.getDuration()  
         });
     }
 }
-    private void refreshTable() {
+ private void refreshTable() {
     DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
     model.setRowCount(0); 
 
     List<Appointment> list = appointmentManager.getAvailableSlots();
 
     for (Appointment a : list) {
-       
         if (a.getParticipants().contains(currentUser.getUsername())) {
             continue; 
         }
@@ -366,7 +380,9 @@ private void refreshMyBookingsTable() {
         model.addRow(new Object[]{
             a.getDate(), 
             a.getStartTime(), 
-            "Available (" + spotsLeft + " left)"
+            "Available (" + spotsLeft + " left)",
+            a.gettype(),      
+            a.getDuration()  
         });
     }
 }

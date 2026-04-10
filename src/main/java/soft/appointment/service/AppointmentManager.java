@@ -126,12 +126,12 @@ public class AppointmentManager {
 
     AppointmentRuleStrategy strategy = getStrategy(appt.gettype());
     if (strategy != null && !strategy.isValid(appt)) {
-        return switch (appt.gettype().toLowerCase()) {
-    case "in-person" -> "Error: In-person appointments are limited to a maximum of 3 participants.";
+        return switch (appt.gettype().toLowerCase().replace("-", "")) {
+    case "inperson" -> "Error: In-person appointments are limited to a maximum of 3 participants.";
     case "virtual" -> "Error: Virtual appointments are limited to a maximum of 10 participants.";
-    case "follow-up" -> "Error: Follow-up appointments cannot exceed a 30-minute duration.";
+    case "followup" -> "Error: Follow-up appointments cannot exceed a 30-minute duration.";
     case "assessment" -> "Error: Assessment appointments must be exactly 60 minutes long.";
-    case "urgent" -> "Error: Urgent appointments must be scheduled for today or tomorrow.";
+    case "urgent" -> "Error: Urgent appointments must be scheduled within the next 3 days.";
     case "individual" -> "Error: Individual appointments are restricted to 1 participant only.";
     default -> "Error: The selected appointment type violates system business rules.";
 };
@@ -212,16 +212,17 @@ public class AppointmentManager {
 private AppointmentRuleStrategy getStrategy(String type){
     if (type == null) return null;
 
-    return switch (type.toLowerCase()) {
-        case "group" -> new GroupAppointmentStrategy();
-        case "individual" -> new IndividualAppointmentStrategy();
-        case "urgent" -> new UrgentAppointmentStrategy();
-        case "followup" -> new FollowUpAppointmentStrategy();
-        case "virtual" -> new VirtualAppointmentStrategy();
-        case "assessment" -> new AssessmentAppointmentStrategy();
-        case "inperson" -> new InPersonAppointmentStrategy();
-        default -> null;
-    };
+    return switch (type.toLowerCase().replace("-", ""))  {
+    case "group" -> new GroupAppointmentStrategy();
+    case "individual" -> new IndividualAppointmentStrategy();
+    case "urgent" -> new UrgentAppointmentStrategy();
+    case "followup" -> new FollowUpAppointmentStrategy();
+    case "virtual" -> new VirtualAppointmentStrategy();
+    case "assessment" -> new AssessmentAppointmentStrategy();
+    case "inperson" -> new InPersonAppointmentStrategy();
+    default -> null;
+};
+
 
 }
 }

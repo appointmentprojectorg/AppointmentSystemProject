@@ -69,7 +69,7 @@ public class AppointmentStorage {
     
     appt.setStatus(p[3]);
     appt.setMaxParticipants(Integer.parseInt(p[4]));
-    appt.setCurrentParticipants(Integer.parseInt(p[5]));
+    //appt.setCurrentParticipants(Integer.parseInt(p[5]));
      String[] names = p[6].split(";");
     for (String n : names) {
         if (!n.equals("NONE") && !n.trim().isEmpty()) {

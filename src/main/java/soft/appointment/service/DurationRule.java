@@ -11,14 +11,17 @@ import soft.appointment.domain.Appointment;
  */
 public class DurationRule implements BookingRuleStrategy {
      @Override
-    public boolean isValid(Appointment appt) {
-        int mins = appt.getStartTime().getMinute();
-       
-        return mins == 0 || mins == 30;
-    }
+public boolean isValid(Appointment appt) {
+    int mins = appt.getStartTime().getMinute();
+    boolean intervalValid = (mins == 0 || mins == 30);
     
-    @Override
-    public String getErrorMessage() {
-        return "Invalid Duration: Appointments must be booked in 30-minute slots (:00 or :30).";
-    }
+    boolean durationValid = appt.getDuration() <= 30;
+    
+    return intervalValid && durationValid;
+}
+
+@Override
+public String getErrorMessage() {
+    return "Error: Appointments must start on the hour/half-hour and cannot exceed 30 minutes.";
+}
 }

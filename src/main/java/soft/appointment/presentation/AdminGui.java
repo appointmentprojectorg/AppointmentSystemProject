@@ -14,6 +14,7 @@ import soft.appointment.domain.User;
 import soft.appointment.persistence.UserStorage;
 import soft.appointment.service.AppointmentManager;
 import soft.appointment.service.EmailNotificationService;
+import soft.appointment.service.EmailService;
 import soft.appointment.service.LoginManager;
 import soft.appointment.service.NotificationManager;
 
@@ -338,7 +339,7 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
 
     private void sendNotificationBtnActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_sendNotificationBtnActionPerformed
         // TODO add your handling code here:
-         int selectedRow = appointmentsTable.getSelectedRow();
+           int selectedRow = appointmentsTable.getSelectedRow();
     if (selectedRow == -1) {
         JOptionPane.showMessageDialog(this, "Select an appointment first!");
         return;
@@ -351,8 +352,15 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
         return; 
     }
 
+    io.github.cdimascio.dotenv.Dotenv dotenv = io.github.cdimascio.dotenv.Dotenv.load();
+    String username = dotenv.get("EMAIL_USERNAME");
+    String password = dotenv.get("EMAIL_PASSWORD");
+
+    EmailService realService = new EmailService(username, password);
+
     NotificationManager nm = new NotificationManager();
-    nm.addObserver(new EmailNotificationService()); 
+  
+    nm.addObserver(new EmailNotificationService(realService)); 
 
     UserStorage userStorage = new UserStorage();
     

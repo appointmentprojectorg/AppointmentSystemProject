@@ -1,91 +1,72 @@
 package soft.appointment.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import static org.mockito.ArgumentMatchers.any;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import static org.mockito.Mockito.*;
-import org.mockito.junit.jupiter.MockitoExtension;
-import soft.appointment.service.LoginManager;
 import soft.appointment.domain.User;
 import soft.appointment.persistence.UserStorage;
+import java.io.File;
 
-/*
-@ExtendWith(MockitoExtension.class)
 public class LoginManagerTest {
 
-    @Mock
-    private UserStorage storage;
-
-    @InjectMocks
     private LoginManager loginManager;
+    private final String TEST_FILE = "test_login_users.txt";
 
-    @Test
-    public void testLoginSuccess() {
-        User fakeUser = new User("admin", "123", "ADMIN");
-        when(storage.getUserByUsername("admin")).thenReturn(fakeUser);
+    @BeforeEach
+    void setUp() {
+        UserStorage storage = new UserStorage(TEST_FILE);
+        loginManager = new LoginManager(storage);
+    }
 
-        boolean result = loginManager.login("admin", "123");
-
-        assertTrue(result);
-        assertEquals(fakeUser, loginManager.getCurrentUser());
+    @AfterEach
+    void tearDown() {
+        File file = new File(TEST_FILE);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     @Test
-    public void testLoginFailure() {
-        User fakeUser = new User("admin", "123", "ADMIN");
-        when(storage.getUserByUsername("admin")).thenReturn(fakeUser);
+    void testRegistrationAndLoginFlow() {
+        int regResult = loginManager.registerUser("moumen", "p123", "p123", "ADMIN", "m@test.com");
+        assertEquals(1, regResult);
 
-        boolean result = loginManager.login("admin", "wrong_password");
-
-        assertFalse(result);
+        boolean loginSuccess = loginManager.login("moumen", "p123");
+        assertTrue(loginSuccess);
+        assertNotNull(loginManager.getCurrentUser());
+        assertEquals("moumen", loginManager.getCurrentUser().getUsername());
     }
 
     @Test
-    public void testLogout() {
+    void testLoginFailure() {
+        loginManager.registerUser("ali", "123", "123", "USER", "ali@test.com");
+        
+        assertFalse(loginManager.login("ali", "wrong_pass"));
+        assertFalse(loginManager.login("non_existent", "123"));
+    }
+
+    @Test
+    void testRegistrationFailures() {
+        int mismatch = loginManager.registerUser("u", "p1", "p2", "USER", "e");
+        assertEquals(0, mismatch);
+
+        loginManager.registerUser("taken", "1", "1", "USER", "e");
+        int taken = loginManager.registerUser("taken", "1", "1", "USER", "e");
+        assertEquals(-1, taken);
+    }
+
+    @Test
+    void testLogoutAndSession() {
+        loginManager.registerUser("user", "pass", "pass", "USER", "e");
+        loginManager.login("user", "pass");
+        
         loginManager.logout();
         assertNull(loginManager.getCurrentUser());
     }
-
+    
     @Test
-    public void testLogoutLogicWithoutStorage() {
-        LoginManager manager = new LoginManager(null);
-        manager.logout();
-        assertNull(manager.getCurrentUser(), "Logout should work without any external dependencies");
-    }
-
-    @Test
-    public void testRegistrationPasswordMismatch() {
-        int result = loginManager.registerUser("user", "pass1", "pass2", "USER");
-        assertEquals(0, result);
-    }
-
-    @Test
-    public void testRegistrationPasswordMismatchWithoutStorage() {
-        LoginManager manager = new LoginManager(null);
-        int result = manager.registerUser("user", "pass1", "pass2", "USER");
-        assertEquals(0, result, "Should return 0 for password mismatch without touching storage");
-    }
-
-    @Test
-    public void testRegisterUserUsernameTaken() {
-        User existing = new User("admin", "123", "ADMIN");
-        when(storage.getUserByUsername("admin")).thenReturn(existing);
-        
-        int result = loginManager.registerUser("admin", "123", "123", "ADMIN");
-        assertEquals(-1, result);
-    }
-
-    @Test
-    public void testRegisterUserSuccess() {
-        when(storage.getUserByUsername("newuser")).thenReturn(null);
-
-        int result = loginManager.registerUser("newuser", "p1", "p1", "USER");
-        
-        assertEquals(1, result);
-        verify(storage, times(1)).saveUser(any(User.class));
+    void testConstructors() {
+        assertNotNull(new LoginManager());
     }
 }
-*/

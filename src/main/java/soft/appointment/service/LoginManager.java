@@ -18,7 +18,7 @@ public class LoginManager {
     private User currentUser = null;
 
     /**
-     * Attempts to log a user into the system.
+     * attempts to log a user into the system.
      * 
      * @param username the username entered 
      * @param password the password entered 
@@ -43,7 +43,9 @@ public class LoginManager {
         return false;
     }
     /**
-     * Constructor with passing
+     * Constructor that accepts a specific UserStorage implementation.
+     * 
+     * @param storage the storage to be used
      */
     public LoginManager(UserStorage storage) {
         this.storage = storage;

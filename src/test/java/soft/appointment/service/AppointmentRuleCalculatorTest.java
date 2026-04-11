@@ -1,41 +1,34 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package soft.appointment.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
-import static org.mockito.ArgumentMatchers.any;
 import org.mockito.Mockito;
+import soft.appointment.domain.Appointment;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import static org.mockito.Mockito.when;
 
-/**
- *
- * @author user
- */
-/*
 public class AppointmentRuleCalculatorTest {
 
     @Test
     void testValidateThrowsExceptionWhenStrategyIsNull() {
         AppointmentRuleCalculator calc = new AppointmentRuleCalculator();
-        assertThrows(IllegalStateException.class, () -> calc.validate(null));
+        Appointment appt = new Appointment(LocalDate.now(), LocalTime.now());
+        assertThrows(IllegalStateException.class, () -> calc.validate(appt));
     }
 
     @Test
     void testValidateAndGetError() {
         AppointmentRuleCalculator calc = new AppointmentRuleCalculator();
         BookingRuleStrategy mockStrategy = Mockito.mock(BookingRuleStrategy.class);
+        Appointment appt = new Appointment(LocalDate.now(), LocalTime.now());
         
-        when(mockStrategy.isValid(any())).thenReturn(false);
+        when(mockStrategy.isValid(appt)).thenReturn(false);
         when(mockStrategy.getErrorMessage()).thenReturn("Error Message");
         
         calc.setStrategy(mockStrategy);
         
-        assertFalse(calc.validate(null));
+        assertFalse(calc.validate(appt));
         assertEquals("Error Message", calc.getErrorMessage());
     }
-}*/
+}

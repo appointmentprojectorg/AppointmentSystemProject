@@ -1,102 +1,90 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package soft.appointment.persistence;
+
+import static org.junit.jupiter.api.Assertions.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import soft.appointment.domain.Appointment;
 
 import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import org.junit.jupiter.api.AfterEach;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import org.junit.jupiter.api.Test;
-import soft.appointment.domain.Appointment;
 
-/**
- *
- * @author user
- */
-/*public class AppointmentStorageTest {
-    private AppointmentStorage storage = new AppointmentStorage("test_appointments.txt");
+
+public class AppointmentStorageTest {
+
+    private final String TEST_FILE = "test_appointments.txt";
+    private AppointmentStorage storage;
+
+    @BeforeEach
+    void setUp() {
+        storage = new AppointmentStorage(TEST_FILE);
+    }
 
     @AfterEach
-    void cleanup() {
-        new File("test_appointments.txt").delete();
+    void tearDown() {
+        File file = new File(TEST_FILE);
+        if (file.exists()) {
+            file.delete();
+        }
     }
 
     @Test
-    void testSaveAndLoadAppointment() {
-        Appointment appt = new Appointment(LocalDate.now(), LocalTime.of(10, 0));
+    void testSaveAndLoad() {
+        Appointment appt = new Appointment(LocalDate.of(2025, 5, 20), LocalTime.of(10, 0));
+        appt.setType("Virtual");
+        appt.setDuration(45);
+        appt.addParticipant("testUser");
+
         storage.saveAppointment(appt);
-        
-        List<Appointment> list = storage.loadAllAppointments();
-        assertEquals(1, list.size(), "Should have exactly one appointment");
-        assertEquals(appt.getDate(), list.get(0).getDate());
-        assertEquals(appt.getStartTime(), list.get(0).getStartTime());
+
+        List<Appointment> results = storage.loadAllAppointments();
+
+        assertEquals(1, results.size(), "Should have exactly 1 appointment.");
+        Appointment saved = results.get(0);
+        assertEquals("Virtual", saved.gettype());
+        assertEquals(45, saved.getDuration());
+        assertTrue(saved.getParticipants().contains("testUser"));
     }
+
     @Test
-void testLoadAllAppointmentsFileNotFound() {
-    AppointmentStorage emptyStorage = new AppointmentStorage("non_existent_file.txt");
-    List<Appointment> result = emptyStorage.loadAllAppointments();
+    void testDeleteAppointment() {
+        Appointment a1 = new Appointment(LocalDate.now(), LocalTime.of(9, 0));
+        Appointment a2 = new Appointment(LocalDate.now(), LocalTime.of(10, 0));
+
+        storage.saveAppointment(a1);
+        storage.saveAppointment(a2);
+
+        storage.deleteAppointment(a1);
+
+        List<Appointment> remaining = storage.loadAllAppointments();
+        assertEquals(1, remaining.size());
+        assertEquals(LocalTime.of(10, 0), remaining.get(0).getStartTime());
+    }
+
     
-    assertNotNull(result);
-    assertTrue(result.isEmpty(), "Should return empty list if file doesn't exist");
-}
+    @Test
+    void testLoadFileNotFound() {
+        new File(TEST_FILE).delete();
+        
+        List<Appointment> results = storage.loadAllAppointments();
+        assertNotNull(results);
+        assertTrue(results.isEmpty());
+    }
 
- @Test
-    void testDeleteExistingAppointment() {
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.of(10, 0);
-        Appointment appt = new Appointment(date, time);
+    
+    @Test
+    void testParticipantSplitting() {
+        Appointment appt = new Appointment(LocalDate.now(), LocalTime.of(11, 0));
+        appt.addParticipant("UserA");
+        appt.addParticipant("UserB");
+        appt.addParticipant("UserC");
+
         storage.saveAppointment(appt);
-        
-        List<Appointment> initialList = storage.loadAllAppointments();
-        assertEquals(1, initialList.size(), "Appointment should be saved initially");
 
-        storage.deleteAppointment(appt);
-
-        List<Appointment> afterDeleteList = storage.loadAllAppointments();
-        assertTrue(afterDeleteList.isEmpty(), "Appointment list should be empty after deletion");
-    }
-
-    @Test
-    void testDeleteNonExistentAppointment() {
-        LocalDate date1 = LocalDate.now();
-        LocalTime time1 = LocalTime.of(10, 0);
-        Appointment existingAppt = new Appointment(date1, time1);
-        storage.saveAppointment(existingAppt);
-
-        LocalDate date2 = LocalDate.now().plusDays(1); // Different date
-        LocalTime time2 = LocalTime.of(11, 0);
-        Appointment nonExistentAppt = new Appointment(date2, time2);
-        
-        List<Appointment> initialList = storage.loadAllAppointments();
-        assertEquals(1, initialList.size(), "Should have one appointment initially");
-
-        storage.deleteAppointment(nonExistentAppt);
-
-        List<Appointment> afterDeleteList = storage.loadAllAppointments();
-        assertEquals(1, afterDeleteList.size(), "List size should remain 1 as non-existent appt was not deleted");
-        assertEquals(existingAppt.getDate(), afterDeleteList.get(0).getDate());
-        assertEquals(existingAppt.getStartTime(), afterDeleteList.get(0).getStartTime());
-    }
-
-    @Test
-    void testDeleteAppointmentIOException() {
-        
-        LocalDate date = LocalDate.now();
-        LocalTime time = LocalTime.of(10, 0);
-        Appointment appt = new Appointment(date, time);
-        
-        // Use a bad storage instance for the delete operation
-        AppointmentStorage badStorage = new AppointmentStorage("C:/Windows/System32/invalid_file_for_delete.txt");
-        
-        
-        assertDoesNotThrow(() -> badStorage.deleteAppointment(appt));
+        List<Appointment> results = storage.loadAllAppointments();
+        assertEquals(3, results.get(0).getParticipants().size());
+        assertTrue(results.get(0).getParticipants().contains("UserB"));
     }
 }
-*/

@@ -117,34 +117,28 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
         futureAppt.addParticipant(testUser.getUsername());
         storage.saveAppointment(futureAppt);
 
-        // User who is NOT a participant trying to cancel
         User stranger = new User("stranger", "pw", "USER", "s@test.com");
         assertFalse(appointmentManager.cancelAppointment(stranger, futureAppt));
 
-        // Admin canceling (Allowed)
         assertTrue(appointmentManager.cancelAppointment(adminUser, futureAppt));
         assertEquals("Available", futureAppt.getStatus());
 
-        // Past/Today cancellation (Blocked)
         Appointment todayAppt = new Appointment(LocalDate.now(), LocalTime.of(10, 0));
         assertFalse(appointmentManager.cancelAppointment(adminUser, todayAppt));
     }
 
     @Test
     void testCancelBooking_And_Reminders() {
-        // Test Cancel Booking (User removes self)
         Appointment appt = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
         appt.addParticipant(testUser.getUsername());
         assertTrue(appointmentManager.cancelBooking(testUser, appt));
 
-        // Mocking for Reminders as requested
         NotificationManager mockNm = mock(NotificationManager.class);
         UserStorage mockUsers = mock(UserStorage.class);
         
         when(mockUsers.getUserByUsername(testUser.getUsername())).thenReturn(testUser);
         
         appointmentManager.sendReminders(appt, mockNm, mockUsers);
-        // Verify mock was hit (testUser was removed but added back for reminder test)
         appt.addParticipant(testUser.getUsername());
         appointmentManager.sendReminders(appt, mockNm, mockUsers);
         verify(mockNm, atLeastOnce()).notifyAll(any(), anyString());
@@ -176,22 +170,17 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
     }
     @Test
     void testSendRemindersInteraction() {
-        // Mock the things AppointmentManager depends on
         NotificationManager mockNm = mock(NotificationManager.class);
         UserStorage mockStorage = mock(UserStorage.class);
         
-        // Setup a fake user
         User user = new User("moumen", "pw", "USER", "moumen@test.com");
         when(mockStorage.getUserByUsername("moumen")).thenReturn(user);
 
-        // Setup an appointment with a participant
         Appointment appt = new Appointment(LocalDate.now(), LocalTime.of(10, 0));
         appt.addParticipant("moumen");
 
-        // Action
         appointmentManager.sendReminders(appt, mockNm, mockStorage);
 
-        // Verify: Did the Manager actually call notifyAll on the NotificationManager?
         verify(mockNm, times(1)).notifyAll(eq(user), anyString());
     }
 }

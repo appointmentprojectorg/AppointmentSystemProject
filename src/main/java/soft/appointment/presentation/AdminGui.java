@@ -53,7 +53,15 @@ public class AdminGui extends javax.swing.JFrame {
 com.github.lgooddatepicker.components.TimePickerSettings timeSettings = dateTimePicker.timePicker.getSettings();
 dateSettings.setAllowKeyboardEditing(false);
 timeSettings.setAllowKeyboardEditing(false);
+
+ timeSettings.generatePotentialMenuTimes(
+            com.github.lgooddatepicker.components.TimePickerSettings.TimeIncrement.FifteenMinutes, 
+            null, 
+            null
+        );
 maxParticipentsSpinner.setModel(new javax.swing.SpinnerNumberModel(1, 1, 99, 1));
+        typeComboBoxActionPerformed(null);
+
 
    
     
@@ -373,12 +381,21 @@ JOptionPane.showMessageDialog(this, "Slot deleted successfully.");
         // TODO add your handling code here:
             String selectedType = typeComboBox.getSelectedItem().toString();
              if (selectedType.equalsIgnoreCase("In-person")) {
-        maxParticipentsSpinner.setValue(3); // Set to 3
+        maxParticipentsSpinner.setValue(3); 
         ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(3);
     } else if (selectedType.equalsIgnoreCase("Virtual")) {
         ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(10);
     } else {
         ((javax.swing.SpinnerNumberModel)maxParticipentsSpinner.getModel()).setMaximum(99);
+    }
+             if (selectedType.equalsIgnoreCase("Assessment")) {
+        durationSpinner.setValue(60);
+        ((javax.swing.SpinnerNumberModel)durationSpinner.getModel()).setMaximum(60);
+        ((javax.swing.SpinnerNumberModel)durationSpinner.getModel()).setMinimum(60);
+    } else {
+        durationSpinner.setValue(30);
+        ((javax.swing.SpinnerNumberModel)durationSpinner.getModel()).setMaximum(30);
+        ((javax.swing.SpinnerNumberModel)durationSpinner.getModel()).setMinimum(15);
     }
 
     }//GEN-LAST:event_typeComboBoxActionPerformed

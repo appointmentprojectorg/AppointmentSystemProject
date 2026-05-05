@@ -46,16 +46,18 @@ public class AppointmentManagerTest {
     }
 
     @Test
-    void testIsSlotValid_Coverage() {
-        Appointment past = new Appointment(LocalDate.now().minusDays(1), LocalTime.of(10, 0));
-        assertEquals("Error: Appointment date and time cannot be in the past.", appointmentManager.isSlotValid(past));
+void testIsSlotValid_Coverage() {
+    Appointment past = new Appointment(LocalDate.now().minusDays(1), LocalTime.of(10, 0));
+    assertEquals("Error: Appointment date and time cannot be in the past.", appointmentManager.isSlotValid(past));
 
-        Appointment invalidTime = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 15));
-        assertTrue(appointmentManager.isSlotValid(invalidTime).contains("30-minute intervals"));
+    Appointment invalidDuration = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 15));
+    invalidDuration.setDuration(45); 
+    assertTrue(appointmentManager.isSlotValid(invalidDuration).contains("cannot exceed 30 minutes"));
 
-        Appointment valid = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 30));
-        assertEquals("VALID", appointmentManager.isSlotValid(valid));
-    }
+    Appointment valid = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 30));
+    valid.setDuration(30);
+    assertEquals("VALID", appointmentManager.isSlotValid(valid));
+}
 
     @Test
     void testBookAppointment_BusinessLogic() {

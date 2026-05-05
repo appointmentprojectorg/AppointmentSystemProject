@@ -14,9 +14,9 @@ import soft.appointment.presentation.MainLoginGui;
 public class AppointmentSystemProject {
 
     public static void main(String[] args) {
-         FlatDarculaLaf.setup();
-         MainLoginGui mine= new MainLoginGui();
-         mine.setVisible(true);
-         
+        FlatDarculaLaf.setup();
+        MainLoginGui mine = new MainLoginGui();
+        mine.setVisible(true);
+
     }
 }

@@ -10,18 +10,19 @@ import soft.appointment.domain.Appointment;
  * @author MoumenAbuAyyash1
  */
 public class DurationRule implements BookingRuleStrategy {
-     @Override
-public boolean isValid(Appointment appt) {
-    int mins = appt.getStartTime().getMinute();
-    boolean intervalValid = (mins == 0 || mins == 30);
-    
-    boolean durationValid = appt.getDuration() <= 30;
-    
-    return intervalValid && durationValid;
-}
+    @Override
+    public boolean isValid(Appointment appt) {
+       
+        if ("Assessment".equalsIgnoreCase(appt.gettype())) {
+            return true; 
+        }
+        
+        
+        return appt.getDuration() > 0 && appt.getDuration() <= 30;
+    }
 
-@Override
-public String getErrorMessage() {
-    return "Error: Appointments must start on the hour/half-hour and cannot exceed 30 minutes.";
-}
+    @Override
+    public String getErrorMessage() {
+        return "Error: Appointment duration cannot exceed 30 minutes (except Assessments).";
+    }
 }

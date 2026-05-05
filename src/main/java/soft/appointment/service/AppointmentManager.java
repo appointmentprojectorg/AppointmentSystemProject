@@ -33,7 +33,7 @@ public class AppointmentManager {
     /**
      * Checks if an appointment slot is valid for creation.
      */
-   public String isSlotValid(Appointment appt) {
+public String isSlotValid(Appointment appt) {
     java.time.LocalDateTime selected = java.time.LocalDateTime.of(appt.getDate(), appt.getStartTime());
     
     if (selected.isBefore(java.time.LocalDateTime.now())) {
@@ -42,14 +42,13 @@ public class AppointmentManager {
 
     calculator.setStrategy(new DurationRule());
     if (!calculator.validate(appt)) {
-        return "Error: Appointments must be scheduled in 30-minute intervals (e.g., :00 or :30).";
+        return calculator.getErrorMessage(); 
     }
 
     return "VALID"; 
 }
     
     public List<Appointment> getAllSlots() {
-    // This returns the whole list from the file
     return storage.loadAllAppointments();
 }
     

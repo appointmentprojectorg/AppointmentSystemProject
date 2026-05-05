@@ -1,2 +1,3 @@
-admin,admin,ADMIN,adminemaildummy
-moumen,0000,USER,direy46965@bpotogo.com
+user,0,USER,bekadid200@spotshops.com
+admin,0,ADMIN,adminemaildummy
+user2,0,USER,fasdfs@gmail.com

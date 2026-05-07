@@ -49,7 +49,7 @@ public class EmailService {
             System.out.println("Email sent successfully to " + to);
 
         } catch (MessagingException e) {
-            e.printStackTrace();
+            
             throw new RuntimeException(" Failed to send email", e);
         }
     }

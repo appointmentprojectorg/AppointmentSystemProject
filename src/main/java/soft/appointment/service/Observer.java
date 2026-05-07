@@ -8,10 +8,7 @@ import soft.appointment.domain.User;
 
 /**
  *
- * @author MoumenAbuAyyash1
- */
-
-/**
+ * *@author MoumenAbuAyyash1
  * Observer interface for the notification system.
  */
 

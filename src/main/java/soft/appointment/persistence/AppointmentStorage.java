@@ -15,14 +15,14 @@ import soft.appointment.domain.Appointment;
  */
 public class AppointmentStorage {
     
-    private  String FILE_NAME = "appointments.txt";
+    private  String fileName = "appointments.txt";
 
     /**
      * Saves a single appointment to the file.
      * @param appt the appointment to save
      */
    public void saveAppointment(Appointment appt) {
-    try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, true))) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, true))) {
         String participantNames = String.join(";", appt.getParticipants());
         
         if (participantNames.isEmpty()) {
@@ -46,7 +46,7 @@ public class AppointmentStorage {
     }
 
     public AppointmentStorage(String fileName) {
-        this.FILE_NAME = fileName;
+        this.fileName = fileName;
     }
     
 
@@ -56,7 +56,7 @@ public class AppointmentStorage {
      */
     public List<Appointment> loadAllAppointments() {
         List<Appointment> list = new ArrayList<>();
-        File file = new File(FILE_NAME);
+        File file = new File(fileName);
         
         if (!file.exists()) return list;
 
@@ -69,7 +69,7 @@ public class AppointmentStorage {
     
     appt.setStatus(p[3]);
     appt.setMaxParticipants(Integer.parseInt(p[4]));
-    //appt.setCurrentParticipants(Integer.parseInt(p[5]));
+    
      String[] names = p[6].split(";");
     for (String n : names) {
         if (!n.equals("NONE") && !n.trim().isEmpty()) {
@@ -97,7 +97,7 @@ public void deleteAppointment(Appointment target) {
     all.removeIf(a -> a.getDate().equals(target.getDate()) && 
                       a.getStartTime().equals(target.getStartTime()));
     
-    try (PrintWriter writer = new PrintWriter(new FileWriter(FILE_NAME, false))) {
+    try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, false))) {
         for (Appointment a : all) {
             String names = String.join(";", a.getParticipants());
             if (names.isEmpty()) names = "NONE";

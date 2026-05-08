@@ -37,6 +37,11 @@ public class UserGui extends javax.swing.JFrame {
 
         setSafeWelcomeMessage(currentUser.getUsername());
 
+        refreshTable();
+        refreshMyBookingsTable();
+    }
+
+    private void refreshTable() {
         DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
         model.setRowCount(0);
         List<Appointment> list = appointmentManager.getAvailableSlots();
@@ -55,10 +60,7 @@ public class UserGui extends javax.swing.JFrame {
                 a.getDuration()
             });
         }
-        
-        refreshMyBookingsTable();
     }
-
 
     private void setSafeWelcomeMessage(String username) {
         String displayName = (username.length() > 15) ? username.substring(0, 12) + "..." : username;
@@ -273,24 +275,6 @@ public class UserGui extends javax.swing.JFrame {
         loginManager.logout();
         this.dispose();
         new MainLoginGui().setVisible(true);
-         DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-        model.setRowCount(0);
-        List<Appointment> list = appointmentManager.getAvailableSlots();
-        for (Appointment a : list) {
-            if (a.getParticipants().contains(currentUser.getUsername())) {
-                continue;
-            }
-            
-            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-            
-            model.addRow(new Object[] {
-                a.getDate(),
-                a.getStartTime(),
-                "Available (" + spotsLeft + " left)",
-                a.gettype(),
-                a.getDuration()
-            });
-        }
     }// GEN-LAST:event_logoutBtnActionPerformed
 
     /**
@@ -315,24 +299,7 @@ public class UserGui extends javax.swing.JFrame {
         String result = appointmentManager.bookAppointment(currentUser, selectedAppt);
         if (result.equals("SUCCESS")) {
             JOptionPane.showMessageDialog(this, "Success! Your appointment is confirmed.");
-            DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-            model.setRowCount(0);
-            List<Appointment> list = appointmentManager.getAvailableSlots();
-            for (Appointment a : list) {
-                if (a.getParticipants().contains(currentUser.getUsername())) {
-                    continue;
-                }
-                
-                int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-                
-                model.addRow(new Object[] {
-                    a.getDate(),
-                    a.getStartTime(),
-                    "Available (" + spotsLeft + " left)",
-                    a.gettype(),
-                    a.getDuration()
-                });
-            }
+            refreshTable();
             refreshMyBookingsTable();
 
         } else {
@@ -362,66 +329,14 @@ public class UserGui extends javax.swing.JFrame {
 
         if (appointmentManager.cancelBooking(currentUser, toCancel)) {
             JOptionPane.showMessageDialog(this, "Booking Cancelled!");
-            DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-            model.setRowCount(0);
-            List<Appointment> list = appointmentManager.getAvailableSlots();
-            for (Appointment a : list) {
-                if (a.getParticipants().contains(currentUser.getUsername())) {
-                    continue;
-                }
-                
-                int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-                
-                model.addRow(new Object[] {
-                    a.getDate(),
-                    a.getStartTime(),
-                    "Available (" + spotsLeft + " left)",
-                    a.gettype(),
-                    a.getDuration()
-                });
-            }
+            refreshTable();
             refreshMyBookingsTable();
         } else {
             JOptionPane.showMessageDialog(this, "Error: You can only cancel future appointments.");
         }
-         DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-        model.setRowCount(0);
-        List<Appointment> list = appointmentManager.getAvailableSlots();
-        for (Appointment a : list) {
-            if (a.getParticipants().contains(currentUser.getUsername())) {
-                continue;
-            }
-            
-            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-            
-            model.addRow(new Object[] {
-                a.getDate(),
-                a.getStartTime(),
-                "Available (" + spotsLeft + " left)",
-                a.gettype(),
-                a.getDuration()
-            });
-        }
     }// GEN-LAST:event_cancelBookingBtnActionPerformed
 
-    private void refreshAppointmentsTableActionPerformed(java.awt.event.ActionEvent evt) {    DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-    model.setRowCount(0);
-    List<Appointment> list = appointmentManager.getAvailableSlots();
-        for (Appointment a : list) {
-            if (a.getParticipants().contains(currentUser.getUsername())) {
-                continue;
-            }
-            
-            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-            
-            model.addRow(new Object[] {
-                a.getDate(),
-                a.getStartTime(),
-                "Available (" + spotsLeft + " left)",
-                a.gettype(),
-                a.getDuration()
-            });
-        }
+    private void refreshAppointmentsTableActionPerformed(java.awt.event.ActionEvent evt) {    refreshTable();
     }
 
     /**

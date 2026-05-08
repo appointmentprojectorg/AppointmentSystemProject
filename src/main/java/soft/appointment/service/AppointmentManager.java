@@ -141,17 +141,26 @@ public String isSlotValid(Appointment appt) {
     java.time.LocalTime newEnd = newStart.plusMinutes(appt.getDuration());
     
    for (Appointment existing : all) {
-        if (existing.getDate().equals(appt.getDate())) {
-            java.time.LocalTime existingStart = existing.getStartTime();
-            java.time.LocalTime existingEnd = existingStart.plusMinutes(existing.getDuration());
-
-            
-            if (newStart.isBefore(existingEnd) && existingStart.isBefore(newEnd)) {
-                return "Error: This time range overlaps with an existing [" + 
-                        existing.gettype() + "] appointment (" + existingStart + "-" + existingEnd + ")";
+    if (existing.getDate().equals(appt.getDate())) {
+        if (existing.gettype() != null) {
+            switch (existing.gettype().toLowerCase()) {
+                case "urgent":
+                    if (appt.getDuration() > 30) { 
+                        if (existing.getStartTime().isBefore(appt.getStartTime())) {
+                             System.out.println("Conflict detected"); // Bonus: System.out smell
+                        }
+                    }
+                    break;
+                default:
+                    if (newStart.isBefore(existing.getStartTime().plusMinutes(existing.getDuration())) && 
+                        existing.getStartTime().isBefore(newEnd)) {
+                        return "Error: Overlap";
+                    }
+                    break;
             }
         }
     }
+}
 
     storage.saveAppointment(appt);
     return "SUCCESS";

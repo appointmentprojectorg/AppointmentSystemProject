@@ -157,7 +157,7 @@ public String isSlotValid(Appointment appt) {
     return "SUCCESS";
 }
 
-    public void removeSlot(Appointment appt) {
+    public void removeSlot(Appointment appt)  {
         storage.deleteAppointment(appt);
     }
     

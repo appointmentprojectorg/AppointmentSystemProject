@@ -65,7 +65,7 @@
                           <Component id="welcomeLabel" alignment="0" min="-2" pref="209" max="-2" attributes="0"/>
                           <Component id="bookBtn" alignment="0" min="-2" pref="121" max="-2" attributes="0"/>
                           <Component id="logoutBtn" alignment="0" min="-2" pref="82" max="-2" attributes="0"/>
-                          <Component id="AppointmentsTable" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Component id="refreshAppointmentsTable" alignment="0" min="-2" max="-2" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
                       <Component id="jScrollPane1" min="-2" pref="470" max="-2" attributes="0"/>
@@ -84,7 +84,7 @@
                               <EmptySpace min="-2" pref="41" max="-2" attributes="0"/>
                               <Component id="bookBtn" min="-2" pref="33" max="-2" attributes="0"/>
                               <EmptySpace max="32767" attributes="0"/>
-                              <Component id="AppointmentsTable" min="-2" pref="34" max="-2" attributes="0"/>
+                              <Component id="refreshAppointmentsTable" min="-2" pref="34" max="-2" attributes="0"/>
                               <EmptySpace max="-2" attributes="0"/>
                               <Component id="logoutBtn" min="-2" pref="34" max="-2" attributes="0"/>
                           </Group>
@@ -183,12 +183,12 @@
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="logoutBtnActionPerformed"/>
               </Events>
             </Component>
-            <Component class="javax.swing.JButton" name="AppointmentsTable">
+            <Component class="javax.swing.JButton" name="refreshAppointmentsTable">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Refresh Table"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AppointmentsTableActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="refreshAppointmentsTableActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>

@@ -4,7 +4,17 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f3782f62-2759-431b-b755-d2a0353ae288" name="Changes" comment="sprint5" />
+    <list default="true" id="f3782f62-2759-431b-b755-d2a0353ae288" name="Changes" comment="sprint5">
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/persistence/AppointmentStorage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/persistence/AppointmentStorage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/persistence/UserStorage.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/persistence/UserStorage.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminCreationGui.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminCreationGui.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminGui$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminGui$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminGui.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/AdminGui.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/MainLoginGui.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/presentation/MainLoginGui.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/target/classes/soft/appointment/service/AppointmentManager.class" beforeDir="false" afterPath="$PROJECT_DIR$/target/classes/soft/appointment/service/AppointmentManager.class" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -49,21 +59,27 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Application.AppointmentSystemProject.executor": "Run",
     "JUnit.StrategyTest.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
     "RunOnceActivity.typescript.service.memoryLimit.init": "true",
     "codeWithMe.voiceChat.enabledByDefault": "false",
-    "git-widget-placeholder": "Yamen",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "git-widget-placeholder": "master",
     "git.auto.fetch.suggestion.counter": "2",
     "ignore.virus.scanning.warn.message": "true",
+    "junie.onboarding.icon.badge.shown": "true",
     "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "C:/Users/mainPc/Documents/NetBeansProjects/AppointmentSystemProject",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "reference.settings.ide.settings.uml",
+    "to.speed.mode.migration.done": "true",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
@@ -89,6 +105,9 @@
       <updated>1775597968668</updated>
       <workItem from="1775597969925" duration="8606000" />
       <workItem from="1775651603955" duration="631000" />
+      <workItem from="1778164775190" duration="1500000" />
+      <workItem from="1778166572175" duration="611000" />
+      <workItem from="1778167241363" duration="4711000" />
     </task>
     <task id="LOCAL-00001" summary="sprint5">
       <option name="closed" value="true" />
@@ -115,5 +134,9 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="sprint5" />
     <option name="LAST_COMMIT_MESSAGE" value="sprint5" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>

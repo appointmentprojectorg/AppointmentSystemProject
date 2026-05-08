@@ -37,7 +37,24 @@ public class UserGui extends javax.swing.JFrame {
 
         setSafeWelcomeMessage(currentUser.getUsername());
 
-        refreshTable();
+        DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
+        model.setRowCount(0);
+        List<Appointment> list = appointmentManager.getAvailableSlots();
+        for (Appointment a : list) {
+            if (a.getParticipants().contains(currentUser.getUsername())) {
+                continue;
+            }
+            
+            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
+            
+            model.addRow(new Object[] {
+                a.getDate(),
+                a.getStartTime(),
+                "Available (" + spotsLeft + " left)",
+                a.gettype(),
+                a.getDuration()
+            });
+        }
         refreshMyBookingsTable();
     }
 
@@ -278,7 +295,24 @@ public class UserGui extends javax.swing.JFrame {
         String result = appointmentManager.bookAppointment(currentUser, selectedAppt);
         if (result.equals("SUCCESS")) {
             JOptionPane.showMessageDialog(this, "Success! Your appointment is confirmed.");
-            refreshTable();
+            DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
+            model.setRowCount(0);
+            List<Appointment> list = appointmentManager.getAvailableSlots();
+            for (Appointment a : list) {
+                if (a.getParticipants().contains(currentUser.getUsername())) {
+                    continue;
+                }
+                
+                int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
+                
+                model.addRow(new Object[] {
+                    a.getDate(),
+                    a.getStartTime(),
+                    "Available (" + spotsLeft + " left)",
+                    a.gettype(),
+                    a.getDuration()
+                });
+            }
             refreshMyBookingsTable();
 
         } else {
@@ -286,11 +320,14 @@ public class UserGui extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, result, "Booking Error", JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_bookBtnActionPerformed
+// GEN-LAST:event_bookBtnActionPerformed
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_refreshBtnActionPerformed
         // TODO add your handling code here:
         refreshMyBookingsTable();
-    }// GEN-LAST:event_refreshBtnActionPerformed
+    }
+    // GEN-LAST:event_AppointmentsTableActionPerformed
+    // GEN-LAST:event_refreshBtnActionPerformed
 
     private void cancelBookingBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_cancelBookingBtnActionPerformed
         // TODO add your handling code here:
@@ -305,17 +342,51 @@ public class UserGui extends javax.swing.JFrame {
 
         if (appointmentManager.cancelBooking(currentUser, toCancel)) {
             JOptionPane.showMessageDialog(this, "Booking Cancelled!");
-            refreshTable();
+            DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
+            model.setRowCount(0);
+            List<Appointment> list = appointmentManager.getAvailableSlots();
+            for (Appointment a : list) {
+                if (a.getParticipants().contains(currentUser.getUsername())) {
+                    continue;
+                }
+                
+                int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
+                
+                model.addRow(new Object[] {
+                    a.getDate(),
+                    a.getStartTime(),
+                    "Available (" + spotsLeft + " left)",
+                    a.gettype(),
+                    a.getDuration()
+                });
+            }
             refreshMyBookingsTable();
         } else {
             JOptionPane.showMessageDialog(this, "Error: You can only cancel future appointments.");
         }
     }// GEN-LAST:event_cancelBookingBtnActionPerformed
 
-    private void AppointmentsTableActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_AppointmentsTableActionPerformed
+    private void AppointmentsTableActionPerformed(java.awt.event.ActionEvent evt) {DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
+    model.setRowCount(0);
+    List<Appointment> list = appointmentManager.getAvailableSlots();
+        // GEN-FIRST:event_AppointmentsTableActionPerformed
         // TODO add your handling code here:
-        refreshTable();
-    }// GEN-LAST:event_AppointmentsTableActionPerformed
+        for (Appointment a : list) {
+            if (a.getParticipants().contains(currentUser.getUsername())) {
+                continue;
+            }
+            
+            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
+            
+            model.addRow(new Object[] {
+                a.getDate(),
+                a.getStartTime(),
+                "Available (" + spotsLeft + " left)",
+                a.gettype(),
+                a.getDuration()
+            });
+        }
+    }
 
     /**
      * @param args the command line arguments
@@ -379,26 +450,4 @@ public class UserGui extends javax.swing.JFrame {
         }
     }
 
-    private void refreshTable() {
-        DefaultTableModel model = (DefaultTableModel) appointmentsTable.getModel();
-        model.setRowCount(0);
-
-        List<Appointment> list = appointmentManager.getAvailableSlots();
-
-        for (Appointment a : list) {
-            if (a.getParticipants().contains(currentUser.getUsername())) {
-                continue;
-            }
-
-            int spotsLeft = a.getMaxParticipants() - a.getCurrentParticipants();
-
-            model.addRow(new Object[] {
-                    a.getDate(),
-                    a.getStartTime(),
-                    "Available (" + spotsLeft + " left)",
-                    a.gettype(),
-                    a.getDuration()
-            });
-        }
-    }
 }

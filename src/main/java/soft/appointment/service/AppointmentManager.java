@@ -7,6 +7,7 @@ import soft.appointment.domain.Appointment;
 import soft.appointment.domain.User;
 import soft.appointment.persistence.AppointmentStorage;
 import soft.appointment.persistence.UserStorage;
+import soft.appointment.presentation.UserGui;
 import soft.appointment.strategy.AppointmentRuleStrategy;
 import soft.appointment.strategy.*;
 
@@ -223,5 +224,17 @@ private AppointmentRuleStrategy getStrategy(String type){
 };
 
 
+}
+
+    public List<Appointment> getAvailableSlotsForUser(User user) {
+    List<Appointment> allAvailable = this.getAvailableSlots(); 
+    List<Appointment> displayedSlots = new ArrayList<>();
+    
+    for (Appointment a : allAvailable) {
+        if (!a.getParticipants().contains(user.getUsername())) {
+            displayedSlots.add(a);
+        }
+    }
+    return displayedSlots;
 }
 }

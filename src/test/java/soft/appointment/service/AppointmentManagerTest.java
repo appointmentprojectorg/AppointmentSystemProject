@@ -185,4 +185,36 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
 
         verify(mockNm, times(1)).notifyAll(eq(user), anyString());
     }
+   @Test
+void testGetAvailableSlotsForUser_Refactored() {
+    User student = new User("moumen", "pw", "USER", "moumen@test.com");
+    
+    Appointment alreadyJoined = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
+    alreadyJoined.addParticipant("moumen");
+    alreadyJoined.setAvailable(true); 
+    
+    Appointment eligibleSlot = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
+    eligibleSlot.setAvailable(true); 
+    
+    storage.saveAppointment(alreadyJoined);
+    storage.saveAppointment(eligibleSlot);
+
+    List<Appointment> results = appointmentManager.getAvailableSlotsForUser(student);
+
+    assertNotNull(results);
+    assertEquals(1, results.size());
+
+    boolean foundEligible = false;
+    for (Appointment a : results) {
+        if (a.getDate().equals(eligibleSlot.getDate()) && 
+            a.getStartTime().equals(eligibleSlot.getStartTime())) {
+            foundEligible = true;
+        }
+        
+        assertFalse(a.getParticipants().contains("moumen")
+            );
+    }
+    
+    assertTrue(foundEligible);
+}
 }

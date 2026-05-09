@@ -287,13 +287,7 @@ public class UserGui extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, "Please select a slot from the table first!");
             return;
         }
-        List<soft.appointment.domain.Appointment> allAvailable = appointmentManager.getAvailableSlots();
-        List<soft.appointment.domain.Appointment> displayedSlots = new java.util.ArrayList<>();
-        for (soft.appointment.domain.Appointment a : allAvailable) {
-            if (!a.getParticipants().contains(currentUser.getUsername())) {
-                displayedSlots.add(a);
-            }
-        }
+        List<Appointment> displayedSlots = appointmentManager.getAvailableSlotsForUser(currentUser);
 
         Appointment selectedAppt = displayedSlots.get(selectedRow);
         String result = appointmentManager.bookAppointment(currentUser, selectedAppt);
@@ -307,7 +301,7 @@ public class UserGui extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(this, result, "Booking Error", JOptionPane.ERROR_MESSAGE);
         }
     }// GEN-LAST:event_bookBtnActionPerformed
-// GEN-LAST:event_bookBtnActionPerformed
+//GEN-LAST:event_bookBtnActionPerformed
 
     private void refreshBtnActionPerformed(java.awt.event.ActionEvent evt) {// GEN-FIRST:event_refreshBtnActionPerformed
         // TODO add your handling code here:

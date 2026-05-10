@@ -1,0 +1,22 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+AppointmentSystemProject,soft.appointment,AppointmentSystemProject,13,0,0,0,5,0,2,0,2,0
+AppointmentSystemProject,soft.appointment.persistence,AppointmentStorage,3,255,5,19,3,55,5,13,0,6
+AppointmentSystemProject,soft.appointment.persistence,UserStorage,1,101,0,8,1,22,0,8,0,4
+AppointmentSystemProject,soft.appointment.strategy,VirtualAppointmentStrategy,0,13,0,2,0,3,0,4,0,3
+AppointmentSystemProject,soft.appointment.strategy,FollowUpAppointmentStrategy,2,11,0,2,1,2,1,3,1,2
+AppointmentSystemProject,soft.appointment.strategy,IndividualAppointmentStrategy,2,11,0,2,1,2,1,3,1,2
+AppointmentSystemProject,soft.appointment.strategy,GroupAppointmentStrategy,0,14,0,2,0,3,0,4,0,3
+AppointmentSystemProject,soft.appointment.strategy,UrgentAppointmentStrategy,2,21,2,2,0,5,2,3,0,3
+AppointmentSystemProject,soft.appointment.strategy,AssessmentAppointmentStrategy,2,11,0,2,1,2,1,3,1,2
+AppointmentSystemProject,soft.appointment.strategy,InPersonAppointmentStrategy,2,11,0,2,1,2,1,3,1,2
+AppointmentSystemProject,soft.appointment.service,AppointmentManager,50,441,22,50,15,103,23,30,2,12
+AppointmentSystemProject,soft.appointment.service,CapacityRule,0,14,0,2,0,3,0,4,0,3
+AppointmentSystemProject,soft.appointment.service,LoginManager,2,76,1,9,1,23,1,10,0,6
+AppointmentSystemProject,soft.appointment.service,EmailService.new Authenticator() {...},16,0,0,0,2,0,2,0,2,0
+AppointmentSystemProject,soft.appointment.service,EmailService,106,0,0,0,31,0,4,0,4,0
+AppointmentSystemProject,soft.appointment.service,DurationRule,0,23,1,5,0,5,1,5,0,3
+AppointmentSystemProject,soft.appointment.service,EmailNotificationService,0,21,0,0,0,7,0,2,0,2
+AppointmentSystemProject,soft.appointment.service,AppointmentRuleValidator,0,24,0,2,0,7,0,5,0,4
+AppointmentSystemProject,soft.appointment.service,NotificationManager,0,31,0,2,0,8,0,4,0,3
+AppointmentSystemProject,soft.appointment.domain,Appointment,0,112,1,1,0,35,1,18,0,18
+AppointmentSystemProject,soft.appointment.domain,User,0,27,0,0,0,10,0,5,0,5

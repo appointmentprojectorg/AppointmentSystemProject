@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppointmentManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AppointmentSystemProject</a> &gt; <a href="index.source.html" class="el_package">soft.appointment.service</a> &gt; <span class="el_source">AppointmentManager.java</span></div><h1>AppointmentManager.java</h1><pre class="source lang-java linenums">package soft.appointment.service;
+
+import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
+import soft.appointment.domain.Appointment;
+import soft.appointment.domain.User;
+import soft.appointment.persistence.AppointmentStorage;
+import soft.appointment.persistence.UserStorage;
+import soft.appointment.presentation.UserGui;
+import soft.appointment.strategy.BookingRuleStrategy;
+import soft.appointment.strategy.*;
+
+/**
+ *   manages the business logic for appointments. 
+ *  handles booking, cancellations, and validation by communicating 
+ * with the storage and rule systems.
+ * * Authors: Moumen Abu Ayyash, Yamen Mashaqi, and Abdullah Zeidan
+ */
+public class AppointmentManager {
+    
+    private AppointmentStorage storage;
+    private AppointmentRuleValidator calculator; 
+/**
+     * Default constructor
+     * It automatically creates a new AppointmentStorage and AppointmentRuleCalculator
+     * to handle the systems data and validation logic.
+     */
+    public AppointmentManager() {
+<span class="fc" id="L30">        this(new AppointmentStorage(), new AppointmentRuleValidator());</span>
+<span class="fc" id="L31">    }</span>
+/**
+     * Initialize the manager with a storage system and a rule validator.
+     *
+     * @param storage  storage  used to save and load appointments.
+     * @param calculator validator used to validate business rules and restrictions.
+     */
+<span class="fc" id="L38">    public AppointmentManager(AppointmentStorage storage, AppointmentRuleValidator calculator) {</span>
+<span class="fc" id="L39">        this.storage = storage;</span>
+<span class="fc" id="L40">        this.calculator = calculator;</span>
+<span class="fc" id="L41">    }</span>
+
+    /**
+     * check if a specific appointment slot follows the  time and duration rules.
+     *  ensures the appointment is not in the past and meets the standard length.
+     *
+     * @param appt  appointment object containing the date, time, and duration.
+     * @return  string &quot;VALID&quot; if all checks pass, or an error message explaining the failure.
+     */
+public String isSlotValid(Appointment appt) {
+<span class="fc" id="L51">    java.time.LocalDateTime selected = java.time.LocalDateTime.of(appt.getDate(), appt.getStartTime());</span>
+    
+<span class="fc bfc" id="L53" title="All 2 branches covered.">    if (selected.isBefore(java.time.LocalDateTime.now())) {</span>
+<span class="fc" id="L54">        return &quot;Error: Appointment date and time cannot be in the past.&quot;;</span>
+    }
+
+<span class="fc" id="L57">    calculator.setStrategy(new DurationRule());</span>
+<span class="fc bfc" id="L58" title="All 2 branches covered.">    if (!calculator.validate(appt)) {</span>
+<span class="fc" id="L59">        return calculator.getErrorMessage(); </span>
+    }
+
+<span class="fc" id="L62">    return &quot;VALID&quot;; </span>
+}
+
+    /**
+     * get all appointments currently in the system.
+     *
+     * @return  list containing every appointment stored in the appointments file.
+     */
+    public List&lt;Appointment&gt; getAllSlots() {
+<span class="nc" id="L71">    return storage.loadAllAppointments();</span>
+}
+    /**
+     * Sends an email reminder to every user signed up for an appointment.
+     *  looks up each participant by their username and sends a formatted message.
+     *
+     * @param appt  appointment for which reminders are being sent.
+     * @param nm  manager responsible for sending the actual notifications.
+     * @param userStorage The storage  used to find user contact details.
+     */
+    public void sendReminders(Appointment appt, NotificationManager nm, UserStorage userStorage) {
+<span class="fc" id="L82">    List&lt;String&gt; usernames = appt.getParticipants();</span>
+    
+<span class="fc bfc" id="L84" title="All 2 branches covered.">    for (String username : usernames) {</span>
+<span class="fc" id="L85">        User user = userStorage.getUserByUsername(username);</span>
+        
+<span class="pc bpc" id="L87" title="2 of 4 branches missed.">        if (user != null &amp;&amp; user.getEmail() != null) {</span>
+<span class="fc" id="L88">            String msg = &quot;Reminder: You have an appointment on &quot; + </span>
+<span class="fc" id="L89">                         appt.getDate() + &quot; at &quot; + appt.getStartTime();</span>
+<span class="fc" id="L90">            nm.notifyAll(user, msg);</span>
+        }
+<span class="fc" id="L92">    }</span>
+<span class="fc" id="L93">}</span>
+
+    /**
+ * Processes  booking for a specific slot.
+ * It checks duration and capacity rules, applies type-specific restrictions, 
+ * and ensures the user is not already booked at the same time.
+ *
+ * @param user The person who wants to join the appointment.
+ * @param appt The appointment slot being booked.
+ * @return SUCCESS if the booking is saved, otherwise a specific error message.
+ */
+  public String bookAppointment(User user, Appointment appt) {
+<span class="fc" id="L105">    calculator.setStrategy(new DurationRule());</span>
+<span class="pc bpc" id="L106" title="1 of 2 branches missed.">    if (!calculator.validate(appt)) {</span>
+<span class="nc" id="L107">        return calculator.getErrorMessage();</span>
+    }
+
+<span class="fc" id="L110">    calculator.setStrategy(new CapacityRule());</span>
+<span class="fc bfc" id="L111" title="All 2 branches covered.">    if (!calculator.validate(appt)) {</span>
+<span class="fc" id="L112">        return calculator.getErrorMessage();</span>
+    }
+
+<span class="fc" id="L115">    BookingRuleStrategy typeStrategy = getStrategy(appt.gettype());</span>
+<span class="pc bpc" id="L116" title="3 of 4 branches missed.">    if (typeStrategy != null &amp;&amp; !typeStrategy.isValid(appt)) {</span>
+<span class="nc" id="L117">        return typeStrategy.getErrorMessage();</span>
+    }
+<span class="fc" id="L119">        List&lt;Appointment&gt; myBookings = getMyBookings(user.getUsername());</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">  for (Appointment mine : myBookings) {</span>
+<span class="pc bpc" id="L121" title="2 of 4 branches missed.">        if (mine.getDate().equals(appt.getDate()) &amp;&amp; mine.getStartTime().equals(appt.getStartTime())) {</span>
+<span class="fc" id="L122">            return &quot;Error: You already have another booking at this time!&quot;;</span>
+        }
+<span class="nc" id="L124">    }</span>
+
+<span class="fc" id="L126">    appt.addParticipant(user.getUsername()); </span>
+
+<span class="fc bfc" id="L128" title="All 2 branches covered.">    if (appt.getCurrentParticipants() &gt;= appt.getMaxParticipants()) {</span>
+<span class="fc" id="L129">        appt.setAvailable(false);</span>
+<span class="fc" id="L130">        appt.setStatus(&quot;Confirmed&quot;);</span>
+    } else {
+<span class="fc" id="L132">        appt.setStatus(&quot;Partially Booked&quot;); </span>
+    }
+
+<span class="fc" id="L135">    storage.deleteAppointment(appt);</span>
+<span class="fc" id="L136">    storage.saveAppointment(appt);</span>
+    
+<span class="fc" id="L138">    return &quot;SUCCESS&quot;;</span>
+}
+/**
+ *  returns all appointments that are still open for booking(doesn't check if the current user already in).
+ * It goes through the entire list in storage and only collects those marked as available.
+ *
+ * @return A list of appointments that can currently be booked by users.
+ */
+    public List&lt;Appointment&gt; getAvailableSlots() {
+<span class="fc" id="L147">        List&lt;Appointment&gt; all = storage.loadAllAppointments();</span>
+<span class="fc" id="L148">        List&lt;Appointment&gt; availableOnly = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">        for (Appointment a : all) {</span>
+<span class="fc bfc" id="L150" title="All 2 branches covered.">            if (a.isAvailable()) {</span>
+<span class="fc" id="L151">                availableOnly.add(a);</span>
+            }
+<span class="fc" id="L153">        }</span>
+<span class="fc" id="L154">        return availableOnly;</span>
+    }
+    /**
+ * Adds a new appointment slot  after  checks.
+ * It verifies that the time is valid, ensures the appointment type follows 
+ * its specific rules (like duration or participant limits), and checks 
+ * that the new slot does not overlap with any existing appointments.
+ *
+ * @param appt The new appointment slot to be added to the system.
+ * @return SUCCESS if the slot is saved, or a detailed error message if it fails any check.
+ */
+ public String addNewSlot(Appointment appt) {
+<span class="fc" id="L166">       String timeValidation = isSlotValid(appt);</span>
+<span class="pc bpc" id="L167" title="1 of 2 branches missed.">     if (!timeValidation.equals(&quot;VALID&quot;)) {</span>
+<span class="nc" id="L168">        return timeValidation;</span>
+    }
+
+<span class="fc" id="L171">    BookingRuleStrategy strategy = getStrategy(appt.gettype());</span>
+<span class="pc bpc" id="L172" title="1 of 4 branches missed.">    if (strategy != null &amp;&amp; !strategy.isValid(appt)) {</span>
+<span class="fc" id="L173">        return strategy.getErrorMessage();</span>
+    }
+
+<span class="fc" id="L176">    List&lt;Appointment&gt; all = storage.loadAllAppointments();</span>
+<span class="fc" id="L177">      java.time.LocalTime newStart = appt.getStartTime();</span>
+<span class="fc" id="L178">    java.time.LocalTime newEnd = newStart.plusMinutes(appt.getDuration());</span>
+    
+<span class="pc bpc" id="L180" title="1 of 2 branches missed."> for (Appointment existing : all) {</span>
+<span class="pc bpc" id="L181" title="1 of 2 branches missed.">        if (existing.getDate().equals(appt.getDate())) {</span>
+<span class="fc" id="L182">            java.time.LocalTime existingStart = existing.getStartTime();</span>
+<span class="fc" id="L183">            java.time.LocalTime existingEnd = existingStart.plusMinutes(existing.getDuration());</span>
+
+            
+<span class="pc bpc" id="L186" title="2 of 4 branches missed.">            if (newStart.isBefore(existingEnd) &amp;&amp; existingStart.isBefore(newEnd)) {</span>
+<span class="fc" id="L187">                return &quot;Error: This time range overlaps with an existing [&quot; + </span>
+<span class="fc" id="L188">                        existing.gettype() + &quot;] appointment (&quot; + existingStart + &quot;-&quot; + existingEnd + &quot;)&quot;;</span>
+            }
+        }
+<span class="nc" id="L191">    }</span>
+
+<span class="nc" id="L193">    storage.saveAppointment(appt);</span>
+<span class="nc" id="L194">    return &quot;SUCCESS&quot;;</span>
+}
+/**
+     * removes an appointment slot from the storage .
+     *
+     * @param appt The appointment slot that needs to be deleted.
+     */
+    public void removeSlot(Appointment appt)  {
+<span class="nc" id="L202">        storage.deleteAppointment(appt);</span>
+<span class="nc" id="L203">    }</span>
+    /**
+     * Cancels an  appointment slot and makes it available again.
+     * This can only be done before the appointment date  
+     * @param user The user requesting the cancellation.
+     * @param appt The appointment slot to be cancelled.
+     * @return true if the cancellation was successful, false if it was too late.
+     */
+    public boolean cancelAppointment(User user, Appointment appt) {
+<span class="fc" id="L212">    LocalDate today = LocalDate.now();</span>
+<span class="pc bpc" id="L213" title="1 of 4 branches missed.">    if (appt.getDate().isBefore(today) || appt.getDate().equals(today)) {</span>
+<span class="fc" id="L214">        return false; </span>
+    }
+
+<span class="pc bpc" id="L217" title="1 of 4 branches missed.">    if (!user.getRole().equalsIgnoreCase(&quot;ADMIN&quot;) &amp;&amp; !appt.getParticipants().contains(user.getUsername())) {</span>
+<span class="fc" id="L218">        return false; </span>
+    }
+
+<span class="fc" id="L221">    appt.setAvailable(true);</span>
+<span class="fc" id="L222">    appt.setStatus(&quot;Available&quot;);</span>
+<span class="fc" id="L223">    appt.getParticipants().clear(); </span>
+<span class="fc" id="L224">    appt.setCurrentParticipants(0);</span>
+
+<span class="fc" id="L226">    storage.deleteAppointment(appt); </span>
+<span class="fc" id="L227">    storage.saveAppointment(appt);   </span>
+    
+<span class="fc" id="L229">    return true;</span>
+}
+    /**
+ *  all appointments that a specific user has joined.
+ * It searches the entire file and returns a list of every slot 
+ * where the user is listed as a participant.
+ *
+ * @param username The unique name of the user to search for.
+ * @return A list of appointments the user is currently part of.
+ */
+    public List&lt;Appointment&gt; getMyBookings(String username) {
+<span class="fc" id="L240">    List&lt;Appointment&gt; all = storage.loadAllAppointments();</span>
+<span class="fc" id="L241">    List&lt;Appointment&gt; myStuff = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L242" title="All 2 branches covered.">    for (Appointment a : all) {</span>
+<span class="fc bfc" id="L243" title="All 2 branches covered.">        if (a.getParticipants().contains(username)) {</span>
+<span class="fc" id="L244">            myStuff.add(a);</span>
+        }
+<span class="fc" id="L246">    }</span>
+<span class="fc" id="L247">    return myStuff;</span>
+}
+    /**
+ * remove a user from a specific appointment slot.
+ *  method updates the participant list and the count, then 
+ * marks the slot as available again so others can join.
+ *
+ * @param user The user who wants to leave the booking.
+ * @param appt The appointment slot the user is leaving.
+ * @return true if the booking was cancelled, false if the date has already passed.
+ */
+    public boolean cancelBooking(User user, Appointment appt) {
+<span class="pc bpc" id="L259" title="1 of 2 branches missed.">    if (appt.getDate().isBefore(java.time.LocalDate.now())) {</span>
+<span class="nc" id="L260">        return false; </span>
+    }
+
+<span class="fc" id="L263">    appt.removeParticipant(user.getUsername());</span>
+    
+<span class="fc" id="L265">    appt.setCurrentParticipants(appt.getParticipants().size());</span>
+    
+<span class="fc" id="L267">    appt.setAvailable(true);</span>
+<span class="fc" id="L268">    appt.setStatus(&quot;Available&quot;);</span>
+
+<span class="fc" id="L270">    storage.deleteAppointment(appt);</span>
+<span class="fc" id="L271">    storage.saveAppointment(appt);</span>
+<span class="fc" id="L272">    return true;</span>
+}
+    /**
+     * select the appropriate validation strategy based on the appointment type.
+     * It cleans the input string to ensure it matches the correct rule set.
+     *
+     * @param type The category of the appointment ( virtual, urgent, so on).
+     * @return The specific strategy object used to check rules, or null if not found.
+     */
+private BookingRuleStrategy getStrategy(String type){
+<span class="pc bpc" id="L282" title="1 of 2 branches missed.">    if (type == null) return null;</span>
+
+<span class="pc bpc" id="L284" title="4 of 8 branches missed.">    return switch (type.toLowerCase().replace(&quot;-&quot;, &quot;&quot;))  {</span>
+<span class="fc" id="L285">    case &quot;group&quot; -&gt; new GroupAppointmentStrategy();</span>
+<span class="nc" id="L286">    case &quot;individual&quot; -&gt; new IndividualAppointmentStrategy();</span>
+<span class="fc" id="L287">    case &quot;urgent&quot; -&gt; new UrgentAppointmentStrategy();</span>
+<span class="nc" id="L288">    case &quot;followup&quot; -&gt; new FollowUpAppointmentStrategy();</span>
+<span class="fc" id="L289">    case &quot;virtual&quot; -&gt; new VirtualAppointmentStrategy();</span>
+<span class="nc" id="L290">    case &quot;assessment&quot; -&gt; new AssessmentAppointmentStrategy();</span>
+<span class="nc" id="L291">    case &quot;inperson&quot; -&gt; new InPersonAppointmentStrategy();</span>
+<span class="fc" id="L292">    default -&gt; null;</span>
+};
+
+
+}
+/**
+     * Returns a list of open appointments that the specific user has not joined yet.
+     * This prevents the user interface from showing slots the user is already part of.
+     *
+     * @param user The user looking for new appointments to book.
+     * @return A list of available appointments that do not contain the user.
+     */
+    public List&lt;Appointment&gt; getAvailableSlotsForUser(User user) {
+<span class="fc" id="L305">    List&lt;Appointment&gt; allAvailable = this.getAvailableSlots(); </span>
+<span class="fc" id="L306">    List&lt;Appointment&gt; displayedSlots = new ArrayList&lt;&gt;();</span>
+    
+<span class="fc bfc" id="L308" title="All 2 branches covered.">    for (Appointment a : allAvailable) {</span>
+<span class="fc bfc" id="L309" title="All 2 branches covered.">        if (!a.getParticipants().contains(user.getUsername())) {</span>
+<span class="fc" id="L310">            displayedSlots.add(a);</span>
+        }
+<span class="fc" id="L312">    }</span>
+<span class="fc" id="L313">    return displayedSlots;</span>
+}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

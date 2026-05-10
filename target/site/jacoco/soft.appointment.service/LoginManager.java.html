@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>LoginManager.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AppointmentSystemProject</a> &gt; <a href="index.source.html" class="el_package">soft.appointment.service</a> &gt; <span class="el_source">LoginManager.java</span></div><h1>LoginManager.java</h1><pre class="source lang-java linenums">package soft.appointment.service;
+
+import soft.appointment.domain.User;
+import soft.appointment.persistence.UserStorage;
+
+/**
+ * Manages the login and logout process for the system and the authentication during that.
+ * 
+ * @author MoumenAbuAyyash1
+ * @version 1.0
+ */
+public class LoginManager {
+    
+    /**  used to find users in the file */
+    private UserStorage storage;
+    
+    /** Keeps track of the person currently using the system */
+<span class="fc" id="L18">    private User currentUser = null;</span>
+
+    /**
+     * attempts to log a user into the system.
+     * 
+     * @param username the username entered 
+     * @param password the password entered 
+     * @return true if the login is successful
+     */
+    public boolean login(String username, String password) {
+        // Ask the storage for a user with this name
+<span class="fc" id="L29">        User userFromFile = storage.getUserByUsername(username);</span>
+        
+        // Check if user exists and if the password matches
+<span class="fc bfc" id="L32" title="All 4 branches covered.">        if (userFromFile != null &amp;&amp; userFromFile.getPassword().equals(password)) {</span>
+            //we check if the user is currently logged in and if yes we kick the old session by logging out
+<span class="pc bpc" id="L34" title="1 of 2 branches missed.">             if (this.currentUser != null) {</span>
+<span class="nc" id="L35">                this.logout(); </span>
+            }
+            // we set the current user to the one who logged in
+<span class="fc" id="L38">            this.currentUser = userFromFile;</span>
+<span class="fc" id="L39">            return true;</span>
+        }
+        
+        // If it reaches here, the login failed
+<span class="fc" id="L43">        return false;</span>
+    }
+    /**
+     * Constructor that accepts a specific UserStorage implementation.
+     * 
+     * @param storage the storage to be used
+     */
+<span class="fc" id="L50">    public LoginManager(UserStorage storage) {</span>
+<span class="fc" id="L51">        this.storage = storage;</span>
+<span class="fc" id="L52">    }</span>
+     /**
+     * Default constructor 
+     */
+<span class="fc" id="L56">    public LoginManager() {</span>
+<span class="fc" id="L57">        this.storage = new UserStorage();</span>
+<span class="fc" id="L58">    }</span>
+
+    /**
+     * Clears the current user session (Logout).
+     */
+    public void logout() {
+<span class="fc" id="L64">        this.currentUser = null;</span>
+<span class="fc" id="L65">    }</span>
+
+    /**
+     * Gets the user who is currently logged in.
+     * 
+     * @return the current User object, or null if nobody is logged in
+     */
+    public User getCurrentUser() {
+<span class="fc" id="L73">        return currentUser;</span>
+    }
+    /**
+     * Creates a new user in the system.
+     * 
+     * @param username the new name
+     * @param password the new password
+     * @param confirmPassword the second password entry for validation
+     * @param role the role (ADMIN or USER)
+     * @return 1 for success, 0 for mismatch, -1 for taken
+     */
+    public int registerUser(String username, String password, String confirmPassword, String role,String email) {
+<span class="fc bfc" id="L85" title="All 2 branches covered.">        if (!password.equals(confirmPassword)) {</span>
+<span class="fc" id="L86">            return 0; </span>
+        }
+        
+<span class="fc bfc" id="L89" title="All 2 branches covered.">        if (storage.getUserByUsername(username) != null) {</span>
+<span class="fc" id="L90">            return -1; </span>
+        }
+        
+<span class="fc" id="L93">    User newUser = new User(username, password, role, email);</span>
+<span class="fc" id="L94">        storage.saveUser(newUser);</span>
+<span class="fc" id="L95">        return 1;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

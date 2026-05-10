@@ -4,6 +4,7 @@
  */
 package soft.appointment.service;
 import soft.appointment.domain.Appointment;
+import soft.appointment.strategy.BookingRuleStrategy;
 
 /**
  *
@@ -12,7 +13,6 @@ import soft.appointment.domain.Appointment;
 public class CapacityRule implements BookingRuleStrategy {
      @Override
     public boolean isValid(Appointment appt) {
-        // PDF Requirement: Capacity rules respected
         return appt.getCurrentParticipants() < appt.getMaxParticipants();
     }
 @Override

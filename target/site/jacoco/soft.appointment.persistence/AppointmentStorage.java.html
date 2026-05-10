@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AppointmentStorage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">AppointmentSystemProject</a> &gt; <a href="index.source.html" class="el_package">soft.appointment.persistence</a> &gt; <span class="el_source">AppointmentStorage.java</span></div><h1>AppointmentStorage.java</h1><pre class="source lang-java linenums">package soft.appointment.persistence;
+
+import java.io.*;
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
+import soft.appointment.domain.Appointment;
+
+/**
+ * handles saving and loading appointments to appointments.txt.
+ * 
+ * @author MoumenAbuAyyash1
+ * @version 1.0
+ */
+public class AppointmentStorage {
+    
+<span class="fc" id="L18">    private  String fileName = &quot;appointments.txt&quot;;</span>
+
+    /**
+     * Saves a single appointment to the file.
+     * @param appt the appointment to save
+     */
+   public void saveAppointment(Appointment appt) {
+<span class="fc" id="L25">    try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, true))) {</span>
+<span class="fc" id="L26">        String participantNames = String.join(&quot;;&quot;, appt.getParticipants());</span>
+        
+<span class="fc bfc" id="L28" title="All 2 branches covered.">        if (participantNames.isEmpty()) {</span>
+<span class="fc" id="L29">            participantNames = &quot;NONE&quot;;</span>
+        }
+
+<span class="fc" id="L32">        writer.println(appt.getDate() + &quot;,&quot; + </span>
+<span class="fc" id="L33">               appt.getStartTime() + &quot;,&quot; + </span>
+<span class="fc" id="L34">               appt.isAvailable() + &quot;,&quot; + </span>
+<span class="fc" id="L35">               appt.getStatus() + &quot;,&quot; + </span>
+<span class="fc" id="L36">               appt.getMaxParticipants() + &quot;,&quot; + </span>
+<span class="fc" id="L37">               appt.getCurrentParticipants() + &quot;,&quot; + </span>
+               participantNames + &quot;,&quot; +
+<span class="fc" id="L39">               appt.gettype() + &quot;,&quot; +           </span>
+<span class="fc" id="L40">               appt.getDuration());             </span>
+<span class="nc" id="L41">    } catch (IOException e) { </span>
+<span class="fc" id="L42">    }</span>
+<span class="fc" id="L43">}</span>
+    
+<span class="fc" id="L45">     public AppointmentStorage() {</span>
+<span class="fc" id="L46">    }</span>
+
+<span class="fc" id="L48">    public AppointmentStorage(String fileName) {</span>
+<span class="fc" id="L49">        this.fileName = fileName;</span>
+<span class="fc" id="L50">    }</span>
+    
+
+    /**
+     * Loads all appointments from the file into a List.
+     * @return a List of Appointment objects
+     */
+    public List&lt;Appointment&gt; loadAllAppointments() {
+<span class="fc" id="L58">        List&lt;Appointment&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L59">        File file = new File(fileName);</span>
+        
+<span class="fc bfc" id="L61" title="All 2 branches covered.">        if (!file.exists()) return list;</span>
+
+<span class="fc" id="L63">        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {</span>
+            String line;
+<span class="fc bfc" id="L65" title="All 2 branches covered.">            while ((line = reader.readLine()) != null) {</span>
+<span class="fc" id="L66">    String[] p = line.split(&quot;,&quot;);</span>
+<span class="fc" id="L67">    Appointment appt = new Appointment(LocalDate.parse(p[0]), LocalTime.parse(p[1]));</span>
+<span class="fc" id="L68">    appt.setAvailable(Boolean.parseBoolean(p[2]));</span>
+    
+<span class="fc" id="L70">    appt.setStatus(p[3]);</span>
+<span class="fc" id="L71">    appt.setMaxParticipants(Integer.parseInt(p[4]));</span>
+    
+<span class="fc" id="L73">     String[] names = p[6].split(&quot;;&quot;);</span>
+<span class="fc bfc" id="L74" title="All 2 branches covered.">    for (String n : names) {</span>
+<span class="pc bpc" id="L75" title="1 of 4 branches missed.">        if (!n.equals(&quot;NONE&quot;) &amp;&amp; !n.trim().isEmpty()) {</span>
+<span class="fc" id="L76">            appt.addParticipant(n);</span>
+        }
+    }
+<span class="pc bpc" id="L79" title="1 of 2 branches missed.">    if (p.length &gt;= 8) {</span>
+<span class="fc" id="L80">    appt.setType(p[7]); </span>
+}
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">if (p.length &gt;= 9) {</span>
+<span class="fc" id="L83">    appt.setDuration(Integer.parseInt(p[8])); </span>
+}
+<span class="fc" id="L85">    list.add(appt);</span>
+<span class="fc" id="L86">}</span>
+<span class="nc" id="L87">        } catch (IOException e) {</span>
+<span class="fc" id="L88">        }</span>
+<span class="fc" id="L89">        return list;</span>
+    }
+    /**
+ * Removes a specific appointment from the storage file.
+ * @param target The appointment to be removed
+ */
+public void deleteAppointment(Appointment target) {
+<span class="fc" id="L96">    List&lt;Appointment&gt; all = loadAllAppointments();</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">    all.removeIf(a -&gt; a.getDate().equals(target.getDate()) &amp;&amp; </span>
+<span class="fc bfc" id="L98" title="All 2 branches covered.">                      a.getStartTime().equals(target.getStartTime()));</span>
+    
+<span class="fc" id="L100">    try (PrintWriter writer = new PrintWriter(new FileWriter(fileName, false))) {</span>
+<span class="fc bfc" id="L101" title="All 2 branches covered.">        for (Appointment a : all) {</span>
+<span class="fc" id="L102">            String names = String.join(&quot;;&quot;, a.getParticipants());</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">            if (names.isEmpty()) names = &quot;NONE&quot;;</span>
+
+<span class="fc" id="L105">           writer.println(a.getDate() + &quot;,&quot; + a.getStartTime() + &quot;,&quot; + a.isAvailable() + &quot;,&quot; +</span>
+<span class="fc" id="L106">               a.getStatus() + &quot;,&quot; + a.getMaxParticipants() + &quot;,&quot; + a.getCurrentParticipants()</span>
+<span class="fc" id="L107">               + &quot;,&quot; + names + &quot;,&quot; + a.gettype() + &quot;,&quot; + a.getDuration());</span>
+<span class="fc" id="L108">        }</span>
+<span class="nc" id="L109">    } catch (IOException e) {</span>
+<span class="fc" id="L110">    }</span>
+<span class="fc" id="L111">}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.14.202510111229</span></div></body></html>

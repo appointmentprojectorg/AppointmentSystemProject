@@ -4,6 +4,7 @@
  */
 package soft.appointment.service;
 import soft.appointment.domain.Appointment;
+import soft.appointment.strategy.BookingRuleStrategy;
 
 /**
  *

@@ -1,0 +1,10 @@
+soft\appointment\persistence\AppointmentStorageTest.class
+soft\appointment\service\EmailNotificationServiceTest.class
+soft\appointment\service\EmailServiceTest.class
+soft\appointment\service\AppointmentManagerTest.class
+soft\appointment\service\AppointmentRuleValidatorTest.class
+soft\appointment\persistence\UserStorageTest.class
+soft\appointment\service\LoginManagerTest.class
+soft\appointment\service\DurationRuleTest.class
+soft\appointment\service\NotificationManagerTest.class
+soft\appointment\service\StrategyTest.class

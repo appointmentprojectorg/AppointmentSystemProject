@@ -8,7 +8,7 @@ import soft.appointment.domain.User;
 import soft.appointment.persistence.AppointmentStorage;
 import soft.appointment.persistence.UserStorage;
 import soft.appointment.presentation.UserGui;
-import soft.appointment.strategy.AppointmentRuleStrategy;
+import soft.appointment.strategy.BookingRuleStrategy;
 import soft.appointment.strategy.*;
 
 /**
@@ -20,14 +20,14 @@ import soft.appointment.strategy.*;
 public class AppointmentManager {
     
     private AppointmentStorage storage;
-    private AppointmentRuleCalculator calculator; 
+    private AppointmentRuleValidator calculator; 
 /**
      * Default constructor
      * It automatically creates a new AppointmentStorage and AppointmentRuleCalculator
      * to handle the systems data and validation logic.
      */
     public AppointmentManager() {
-        this(new AppointmentStorage(), new AppointmentRuleCalculator());
+        this(new AppointmentStorage(), new AppointmentRuleValidator());
     }
 /**
      * Initialize the manager with a storage system and a rule validator.
@@ -35,7 +35,7 @@ public class AppointmentManager {
      * @param storage  storage  used to save and load appointments.
      * @param calculator validator used to validate business rules and restrictions.
      */
-    public AppointmentManager(AppointmentStorage storage, AppointmentRuleCalculator calculator) {
+    public AppointmentManager(AppointmentStorage storage, AppointmentRuleValidator calculator) {
         this.storage = storage;
         this.calculator = calculator;
     }
@@ -112,9 +112,9 @@ public String isSlotValid(Appointment appt) {
         return calculator.getErrorMessage();
     }
 
-    AppointmentRuleStrategy typeStrategy = getStrategy(appt.gettype());
+    BookingRuleStrategy typeStrategy = getStrategy(appt.gettype());
     if (typeStrategy != null && !typeStrategy.isValid(appt)) {
-        return "Error: Booking denied due to " + appt.gettype() + " appointment restrictions.";
+        return typeStrategy.getErrorMessage();
     }
         List<Appointment> myBookings = getMyBookings(user.getUsername());
   for (Appointment mine : myBookings) {
@@ -168,17 +168,9 @@ public String isSlotValid(Appointment appt) {
         return timeValidation;
     }
 
-    AppointmentRuleStrategy strategy = getStrategy(appt.gettype());
+    BookingRuleStrategy strategy = getStrategy(appt.gettype());
     if (strategy != null && !strategy.isValid(appt)) {
-        return switch (appt.gettype().toLowerCase().replace("-", "")) {
-    case "inperson" -> "Error: In-person appointments are limited to a maximum of 3 participants.";
-    case "virtual" -> "Error: Virtual appointments are limited to a maximum of 10 participants.";
-    case "followup" -> "Error: Follow-up appointments cannot exceed a 30-minute duration.";
-    case "assessment" -> "Error: Assessment appointments must be exactly 60 minutes long.";
-    case "urgent" -> "Error: Urgent appointments must be scheduled within the next 3 days.";
-    case "individual" -> "Error: Individual appointments are restricted to 1 participant only.";
-    default -> "Error: The selected appointment type violates system business rules.";
-};
+        return strategy.getErrorMessage();
     }
 
     List<Appointment> all = storage.loadAllAppointments();
@@ -286,7 +278,7 @@ public String isSlotValid(Appointment appt) {
      * @param type The category of the appointment ( virtual, urgent, so on).
      * @return The specific strategy object used to check rules, or null if not found.
      */
-private AppointmentRuleStrategy getStrategy(String type){
+private BookingRuleStrategy getStrategy(String type){
     if (type == null) return null;
 
     return switch (type.toLowerCase().replace("-", ""))  {

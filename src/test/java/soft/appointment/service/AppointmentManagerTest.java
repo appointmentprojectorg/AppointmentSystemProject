@@ -30,8 +30,8 @@ public class AppointmentManagerTest {
     void setUp() {
         String testFileName = tempDir.resolve("test_appointments.txt").toString();
         storage = new AppointmentStorage(testFileName);
-        appointmentManager = new AppointmentManager(storage, new AppointmentRuleCalculator());
-        
+        appointmentManager = new AppointmentManager(storage, new AppointmentRuleValidator());
+
         testUser = new User("moumen", "pw", "USER", "moumen@test.com");
         adminUser = new User("admin", "adminpw", "ADMIN", "admin@test.com");
     }
@@ -40,29 +40,29 @@ public class AppointmentManagerTest {
     void testConstructors() {
         AppointmentManager amDefault = new AppointmentManager();
         assertNotNull(amDefault);
-        
-        AppointmentManager amManual = new AppointmentManager(storage, new AppointmentRuleCalculator());
+
+        AppointmentManager amManual = new AppointmentManager(storage, new AppointmentRuleValidator());
         assertNotNull(amManual);
     }
 
     @Test
-void testIsSlotValid_Coverage() {
-    Appointment past = new Appointment(LocalDate.now().minusDays(1), LocalTime.of(10, 0));
-    assertEquals("Error: Appointment date and time cannot be in the past.", appointmentManager.isSlotValid(past));
+    void testIsSlotValid_Coverage() {
+        Appointment past = new Appointment(LocalDate.now().minusDays(1), LocalTime.of(10, 0));
+        assertEquals("Error: Appointment date and time cannot be in the past.", appointmentManager.isSlotValid(past));
 
-    Appointment invalidDuration = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 15));
-    invalidDuration.setDuration(45); 
-    assertTrue(appointmentManager.isSlotValid(invalidDuration).contains("cannot exceed 30 minutes"));
+        Appointment invalidDuration = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 15));
+        invalidDuration.setDuration(45);
+        assertTrue(appointmentManager.isSlotValid(invalidDuration).contains("cannot exceed 30 minutes"));
 
-    Appointment valid = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 30));
-    valid.setDuration(30);
-    assertEquals("VALID", appointmentManager.isSlotValid(valid));
-}
+        Appointment valid = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 30));
+        valid.setDuration(30);
+        assertEquals("VALID", appointmentManager.isSlotValid(valid));
+    }
 
     @Test
     void testBookAppointment_BusinessLogic() {
         Appointment appt = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
-        appt.setMaxParticipants(2); 
+        appt.setMaxParticipants(2);
         storage.saveAppointment(appt);
 
         String result = appointmentManager.bookAppointment(testUser, appt);
@@ -89,7 +89,7 @@ void testIsSlotValid_Coverage() {
 
         Appointment existing = new Appointment(futureDate, LocalTime.of(9, 0));
         existing.setType("Assessment");
-        existing.setDuration(60); 
+        existing.setDuration(60);
         storage.saveAppointment(existing);
 
         Appointment overlapping = new Appointment(futureDate, LocalTime.of(9, 30));
@@ -100,16 +100,19 @@ void testIsSlotValid_Coverage() {
         Appointment v = new Appointment(futureDate, LocalTime.of(11, 0));
         v.setType("virtual");
         v.setMaxParticipants(15);
-        assertEquals("Error: Virtual appointments are limited to a maximum of 10 participants.", appointmentManager.addNewSlot(v));
+        assertEquals("Error: Virtual appointments are limited to a maximum of 10 participants.",
+                appointmentManager.addNewSlot(v));
 
-       Appointment u = new Appointment(LocalDate.now().plusDays(10), LocalTime.of(12, 0));
-u.setType("urgent");
-assertEquals("Error: Urgent appointments must be scheduled within the next 3 days.", appointmentManager.addNewSlot(u));
+        Appointment u = new Appointment(LocalDate.now().plusDays(10), LocalTime.of(12, 0));
+        u.setType("urgent");
+        assertEquals("Error: Urgent appointments must be scheduled within the next 3 days.",
+                appointmentManager.addNewSlot(u));
 
         Appointment g = new Appointment(futureDate, LocalTime.of(14, 0));
         g.setType("group");
-        g.setMaxParticipants(-1); 
-        assertEquals("Error: The selected appointment type violates system business rules.", appointmentManager.addNewSlot(g));
+        g.setMaxParticipants(-1);
+        assertEquals("Error: Group appointment has reached its maximum capacity.",
+                appointmentManager.addNewSlot(g));
     }
 
     @Test
@@ -137,9 +140,9 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
 
         NotificationManager mockNm = mock(NotificationManager.class);
         UserStorage mockUsers = mock(UserStorage.class);
-        
+
         when(mockUsers.getUserByUsername(testUser.getUsername())).thenReturn(testUser);
-        
+
         appointmentManager.sendReminders(appt, mockNm, mockUsers);
         appt.addParticipant(testUser.getUsername());
         appointmentManager.sendReminders(appt, mockNm, mockUsers);
@@ -152,10 +155,10 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
         a1.setAvailable(true);
         Appointment a2 = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
         a2.setAvailable(false);
-        
+
         storage.saveAppointment(a1);
         storage.saveAppointment(a2);
-        
+
         List<Appointment> results = appointmentManager.getAvailableSlots();
         assertEquals(1, results.size());
         assertTrue(results.get(0).isAvailable());
@@ -166,15 +169,16 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
         Appointment appt = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(10, 0));
         appt.addParticipant("moumen");
         storage.saveAppointment(appt);
-        
+
         List<Appointment> mine = appointmentManager.getMyBookings("moumen");
         assertEquals(1, mine.size());
     }
+
     @Test
     void testSendRemindersInteraction() {
         NotificationManager mockNm = mock(NotificationManager.class);
         UserStorage mockStorage = mock(UserStorage.class);
-        
+
         User user = new User("moumen", "pw", "USER", "moumen@test.com");
         when(mockStorage.getUserByUsername("moumen")).thenReturn(user);
 
@@ -185,36 +189,36 @@ assertEquals("Error: Urgent appointments must be scheduled within the next 3 day
 
         verify(mockNm, times(1)).notifyAll(eq(user), anyString());
     }
-   @Test
-void testGetAvailableSlotsForUser_Refactored() {
-    User student = new User("moumen", "pw", "USER", "moumen@test.com");
-    
-    Appointment alreadyJoined = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
-    alreadyJoined.addParticipant("moumen");
-    alreadyJoined.setAvailable(true); 
-    
-    Appointment eligibleSlot = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
-    eligibleSlot.setAvailable(true); 
-    
-    storage.saveAppointment(alreadyJoined);
-    storage.saveAppointment(eligibleSlot);
 
-    List<Appointment> results = appointmentManager.getAvailableSlotsForUser(student);
+    @Test
+    void testGetAvailableSlotsForUser_Refactored() {
+        User student = new User("moumen", "pw", "USER", "moumen@test.com");
 
-    assertNotNull(results);
-    assertEquals(1, results.size());
+        Appointment alreadyJoined = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(14, 0));
+        alreadyJoined.addParticipant("moumen");
+        alreadyJoined.setAvailable(true);
 
-    boolean foundEligible = false;
-    for (Appointment a : results) {
-        if (a.getDate().equals(eligibleSlot.getDate()) && 
-            a.getStartTime().equals(eligibleSlot.getStartTime())) {
-            foundEligible = true;
+        Appointment eligibleSlot = new Appointment(LocalDate.now().plusDays(1), LocalTime.of(15, 0));
+        eligibleSlot.setAvailable(true);
+
+        storage.saveAppointment(alreadyJoined);
+        storage.saveAppointment(eligibleSlot);
+
+        List<Appointment> results = appointmentManager.getAvailableSlotsForUser(student);
+
+        assertNotNull(results);
+        assertEquals(1, results.size());
+
+        boolean foundEligible = false;
+        for (Appointment a : results) {
+            if (a.getDate().equals(eligibleSlot.getDate()) &&
+                    a.getStartTime().equals(eligibleSlot.getStartTime())) {
+                foundEligible = true;
+            }
+
+            assertFalse(a.getParticipants().contains("moumen"));
         }
-        
-        assertFalse(a.getParticipants().contains("moumen")
-            );
+
+        assertTrue(foundEligible);
     }
-    
-    assertTrue(foundEligible);
-}
 }

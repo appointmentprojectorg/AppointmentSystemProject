@@ -23,7 +23,7 @@ public class AppointmentManager {
     private AppointmentRuleValidator calculator; 
 /**
      * Default constructor
-     * It automatically creates a new AppointmentStorage and AppointmentRuleCalculator
+     * It automatically creates a new AppointmentStorage and AppointmentRuleValidator
      * to handle the systems data and validation logic.
      */
     public AppointmentManager() {
